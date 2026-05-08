@@ -26,13 +26,14 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
         width: "100%",
         maxWidth: 340,
         mx: "auto",
+        minWidth: 0,
         display: "flex",
         flexDirection: "column",
         alignItems: "stretch",
         gap: 1.5,
       }}
     >
-      <Box sx={{ px: 1.5 }}>
+      <Box sx={{ px: 1.5, minWidth: 0 }}>
         <Typography
           sx={{
             color: "primary.main",
@@ -61,6 +62,7 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
           position: "relative",
           borderRadius: "32px",
           padding: "10px",
+          minWidth: 0,
           background: surfaces.deviceFrame,
           border: surfaces.isDark
             ? "1px solid rgba(255, 255, 255, 0.08)"
@@ -136,6 +138,8 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
             display: "flex",
             flexDirection: "column",
             gap: 1.8,
+            minWidth: 0,
+            overflow: "hidden",
             boxShadow: `inset 0 0 32px ${hexToRgba(color, 0.06)}`,
           }}
         >
@@ -145,6 +149,7 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
               alignItems: "center",
               justifyContent: "space-between",
               gap: 1,
+              minWidth: 0,
             }}
           >
             <Typography
@@ -153,6 +158,10 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
                 fontSize: "0.62rem",
                 fontFamily: "monospace",
                 letterSpacing: "0.18em",
+                minWidth: 0,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
               P{String(index + 1).padStart(2, "0")} · ACTIVE
@@ -165,11 +174,12 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
                 borderRadius: "50%",
                 bgcolor: color,
                 boxShadow: `0 0 10px ${color}`,
+                flexShrink: 0,
               }}
             />
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
             <Box
               sx={{
                 width: 38,
@@ -190,7 +200,10 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
                 color: "text.primary",
                 fontSize: "1rem",
                 fontWeight: 800,
-                lineHeight: 1.15,
+                lineHeight: 1.2,
+                minWidth: 0,
+                wordBreak: "break-word",
+                overflowWrap: "anywhere",
               }}
             >
               {project.title}
@@ -200,8 +213,9 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
               gap: 1,
+              minWidth: 0,
             }}
           >
             <DeviceStat
@@ -212,7 +226,7 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
             <DeviceStat color={color} label="Related" value={`${relatedProjects.length}`} />
           </Box>
 
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 color: "text.secondary",
@@ -225,7 +239,7 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
               Keywords
             </Typography>
 
-            <Stack direction="row" gap={0.6} flexWrap="wrap">
+            <Stack direction="row" gap={0.6} flexWrap="wrap" sx={{ minWidth: 0 }}>
               {tags.map((tag) => (
                 <Chip
                   key={tag}
@@ -233,11 +247,16 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
                   size="small"
                   sx={{
                     height: 22,
+                    maxWidth: "100%",
                     fontSize: "0.7rem",
                     color,
                     borderColor: hexToRgba(color, 0.42),
                     bgcolor: hexToRgba(color, 0.08),
                     fontWeight: 700,
+                    "& .MuiChip-label": {
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                    },
                   }}
                   variant="outlined"
                 />
@@ -246,7 +265,7 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
           </Box>
 
           {relatedProjects.length > 0 && (
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Typography
                 sx={{
                   color: "text.secondary",
@@ -259,18 +278,25 @@ export default function ProjectsInfoDevice({ project, index }: ProjectsInfoDevic
                 Related Projects
               </Typography>
 
-              <Stack direction="row" gap={0.6} flexWrap="wrap">
+              <Stack direction="row" gap={0.6} flexWrap="wrap" sx={{ minWidth: 0 }}>
                 {relatedProjects.map((relatedProject) => (
                   <Chip
                     key={relatedProject}
                     label={relatedProject}
                     size="small"
                     sx={{
-                      height: 22,
+                      height: "auto",
+                      minHeight: 22,
+                      maxWidth: "100%",
                       fontSize: "0.7rem",
                       color,
                       borderColor: hexToRgba(color, 0.45),
                       bgcolor: hexToRgba(color, 0.08),
+                      "& .MuiChip-label": {
+                        py: 0.4,
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                      },
                     }}
                     variant="outlined"
                   />
@@ -293,6 +319,8 @@ function DeviceStat({ color, label, value }: { color: string; label: string; val
         border: `1px solid ${hexToRgba(color, 0.22)}`,
         px: 1.2,
         py: 0.8,
+        minWidth: 0,
+        overflow: "hidden",
       }}
     >
       <Typography
@@ -301,6 +329,9 @@ function DeviceStat({ color, label, value }: { color: string; label: string; val
           fontSize: "0.6rem",
           letterSpacing: "0.14em",
           textTransform: "uppercase",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
         }}
       >
         {label}

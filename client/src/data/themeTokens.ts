@@ -17,6 +17,11 @@ export interface AppThemeTokens {
 
   surfaceAlt: string;
 
+  brandNavyMain: string;
+  brandNavyLight: string;
+  brandNavyDark: string;
+  brandNavyContrast: string;
+
   white: string;
 
   onPrimaryDark: string;
@@ -53,6 +58,11 @@ export const themeTokens: Record<ThemeMode, AppThemeTokens> = {
 
     surfaceAlt: "#032f63",
 
+    brandNavyMain: "#012851",
+    brandNavyLight: "#0a3d7a",
+    brandNavyDark: "#001838",
+    brandNavyContrast: "#ffffff",
+
     white: "#ffffff",
 
     onPrimaryDark: "#ffffff",
@@ -87,6 +97,11 @@ export const themeTokens: Record<ThemeMode, AppThemeTokens> = {
     divider: "rgba(255,255,255,0.12)",
 
     surfaceAlt: "#062f63",
+
+    brandNavyMain: "#012851",
+    brandNavyLight: "#1a4880",
+    brandNavyDark: "#001a3d",
+    brandNavyContrast: "#ffffff",
 
     white: "#ffffff",
 

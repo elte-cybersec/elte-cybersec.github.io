@@ -5,14 +5,16 @@ import {
   Box,
   IconButton,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { useThemeMode } from "../../../MyThemeProvider";
-import AnimatedTitle from "./AnimatedTitle";
 import HeaderNavTabs from "./HeaderNavTabs";
 import UnderConstructionBadge from "./UnderConstructionBadge";
-import { siteConfig } from "../../../data/siteConfig";
+import ElteInformaticsLogo from "./ElteInformaticsLogo";
+import AnimatedTitle from "./AnimatedTitle";
 
 interface HeaderProps {
   sticky?: boolean;
@@ -20,20 +22,26 @@ interface HeaderProps {
 
 export default function Header({ sticky = true }: HeaderProps) {
   const { mode, toggle } = useThemeMode();
+  const theme = useTheme();
   const isLight = mode === "light";
+  const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMd = useMediaQuery(theme.breakpoints.down("md"));
+
+  const logoHeight = isXs ? 30 : isMd ? 36 : 44;
+
+  const baseNavyColor = isLight ? "brandNavy.light" : "brandNavy.dark";
+  const hoverNavyColor = isLight ? "brandNavy.dark" : "brandNavy.light";
 
   return (
     <>
       <AppBar
         position={sticky ? "sticky" : "static"}
-        color="transparent"
         elevation={0}
         sx={{
-          bgcolor: "background.paper",
-          color: "text.primary",
+          bgcolor: isLight ? "primary.light" : "primary.dark",
+          color: "common.white",
           backgroundImage: "none",
-          borderBottom: 1,
-          borderColor: "divider",
+          borderBottom: 0,
           overflow: "hidden",
         }}
       >
@@ -42,34 +50,59 @@ export default function Header({ sticky = true }: HeaderProps) {
         <Container maxWidth="xl" disableGutters>
           <Toolbar
             sx={{
-              minHeight: { xs: 64, md: 72 },
+              minHeight: { xs: 64, md: 80 },
               display: "grid",
-              gridTemplateColumns: { xs: "1fr auto", md: "1fr auto 1fr" },
+              gridTemplateColumns: { xs: "auto 1fr auto", md: "1fr auto 1fr" },
               alignItems: "center",
-              px: 2,
-              gap: 1,
+              px: { xs: 2, md: 3 },
+              gap: { xs: 1, md: 2 },
             }}
           >
-            <Box sx={{ display: { xs: "none", md: "block" } }} />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifySelf: "start",
+                minWidth: 0,
+              }}
+            >
+              <ElteInformaticsLogo
+                height={logoHeight}
+                color={baseNavyColor}
+                hoverColor={hoverNavyColor}
+              />
+            </Box>
 
             <Box
               sx={{
                 display: "flex",
-                justifyContent: { xs: "flex-start", md: "center" },
-                overflow: "hidden",
+                justifyContent: "center",
+                alignItems: "center",
+                justifySelf: "center",
                 minWidth: 0,
+                overflow: "hidden",
               }}
             >
-              <AnimatedTitle title={siteConfig.siteTitle} />
+              <AnimatedTitle title="Cybersecurity-Lab" />
             </Box>
 
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                justifySelf: "end",
+              }}
+            >
               <Tooltip title={isLight ? "Switch to dark" : "Switch to light"}>
                 <IconButton
                   onClick={toggle}
                   aria-label="toggle theme"
                   sx={{
-                    color: isLight ? "primary.main" : "text.primary",
+                    color: baseNavyColor,
+                    "&:hover": {
+                      color: hoverNavyColor,
+                    },
                   }}
                 >
                   {isLight ? <DarkModeIcon /> : <LightModeIcon />}
@@ -80,7 +113,9 @@ export default function Header({ sticky = true }: HeaderProps) {
         </Container>
       </AppBar>
 
-      <HeaderNavTabs />
+      <Box sx={{ pt: { xs: 1.5, md: 2 }, pb: { xs: 1, md: 1.5 } }}>
+        <HeaderNavTabs />
+      </Box>
     </>
   );
 }

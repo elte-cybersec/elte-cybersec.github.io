@@ -67,6 +67,8 @@ export default function ProjectsDetailBody({
     <Paper
       elevation={0}
       sx={{
+        width: "100%",
+        minWidth: 0,
         borderRadius: 5,
         border: "1px solid",
         borderColor: color,
@@ -75,7 +77,7 @@ export default function ProjectsDetailBody({
         boxShadow: `0 0 36px ${hexToRgba(color, 0.14)}`,
       }}
     >
-      <Box sx={{ p: { xs: 2.5, md: 3.5 } }}>
+      <Box sx={{ p: { xs: 2.5, md: 3.5 }, minWidth: 0 }}>
         <Typography
           sx={{
             color,
@@ -93,11 +95,13 @@ export default function ProjectsDetailBody({
           component="h2"
           sx={{
             color: "text.primary",
-            fontSize: { xs: "1.85rem", md: "3rem" },
+            fontSize: { xs: "1.6rem", sm: "1.85rem", md: "3rem" },
             fontWeight: 900,
             letterSpacing: "-0.05em",
-            lineHeight: 1,
+            lineHeight: 1.05,
             mb: 2,
+            wordBreak: "break-word",
+            overflowWrap: "anywhere",
           }}
         >
           {project.title}
@@ -108,6 +112,8 @@ export default function ProjectsDetailBody({
             color: "text.secondary",
             lineHeight: 1.8,
             fontSize: "0.95rem",
+            wordBreak: "break-word",
+            overflowWrap: "anywhere",
           }}
         >
           {project.description}
@@ -122,9 +128,10 @@ export default function ProjectsDetailBody({
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" },
           gap: 3,
+          minWidth: 0,
         }}
       >
-        <Box>
+        <Box sx={{ minWidth: 0 }}>
           <Typography
             component="h3"
             sx={{
@@ -148,6 +155,7 @@ export default function ProjectsDetailBody({
                   color: "text.secondary",
                   lineHeight: 1.6,
                   fontSize: "0.9rem",
+                  minWidth: 0,
                 }}
               >
                 <Box
@@ -160,13 +168,22 @@ export default function ProjectsDetailBody({
                     boxShadow: `0 0 16px ${hexToRgba(color, 0.55)}`,
                   }}
                 />
-                <span>{objective}</span>
+                <Box
+                  component="span"
+                  sx={{
+                    minWidth: 0,
+                    wordBreak: "break-word",
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {objective}
+                </Box>
               </Box>
             ))}
           </Stack>
         </Box>
 
-        <Box>
+        <Box sx={{ minWidth: 0 }}>
           <Box
             sx={{
               display: "flex",
@@ -174,6 +191,7 @@ export default function ProjectsDetailBody({
               justifyContent: "space-between",
               gap: 2,
               mb: 2,
+              flexWrap: "wrap",
             }}
           >
             <Typography
@@ -198,7 +216,7 @@ export default function ProjectsDetailBody({
             </Typography>
           </Box>
 
-          <Stack spacing={1.5}>
+          <Stack spacing={1.5} sx={{ minWidth: 0 }}>
             {project.subProjects.map((subProject) => {
               const isExpanded = expandedSubProject === subProject.title;
               const matchedCodebases = resolveCodebaseMatches(subProject.codebases);
@@ -208,6 +226,8 @@ export default function ProjectsDetailBody({
                   key={subProject.title}
                   elevation={0}
                   sx={{
+                    width: "100%",
+                    minWidth: 0,
                     overflow: "hidden",
                     borderRadius: 3,
                     border: "1px solid",
@@ -229,6 +249,11 @@ export default function ProjectsDetailBody({
                       color: "text.primary",
                       textTransform: "none",
                       fontWeight: 800,
+                      minWidth: 0,
+                      "& .MuiButton-endIcon": {
+                        flexShrink: 0,
+                        ml: 1,
+                      },
                     }}
                     endIcon={
                       <ExpandMoreIcon
@@ -240,11 +265,22 @@ export default function ProjectsDetailBody({
                       />
                     }
                   >
-                    {subProject.title}
+                    <Box
+                      component="span"
+                      sx={{
+                        minWidth: 0,
+                        flex: 1,
+                        wordBreak: "break-word",
+                        overflowWrap: "anywhere",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {subProject.title}
+                    </Box>
                   </Button>
 
                   <Collapse in={isExpanded}>
-                    <Box sx={{ px: 2, pb: 2 }}>
+                    <Box sx={{ px: 2, pb: 2, minWidth: 0 }}>
                       <Divider sx={{ mb: 2, borderColor: "divider" }} />
 
                       <Typography
@@ -253,6 +289,8 @@ export default function ProjectsDetailBody({
                           lineHeight: 1.75,
                           fontSize: "0.9rem",
                           mb: 2,
+                          wordBreak: "break-word",
+                          overflowWrap: "anywhere",
                         }}
                       >
                         {subProject.description}
@@ -282,6 +320,7 @@ export default function ProjectsDetailBody({
                               color: "text.secondary",
                               fontSize: "0.86rem",
                               lineHeight: 1.55,
+                              minWidth: 0,
                             }}
                           >
                             <Box
@@ -293,13 +332,22 @@ export default function ProjectsDetailBody({
                                 bgcolor: color,
                               }}
                             />
-                            <span>{focus}</span>
+                            <Box
+                              component="span"
+                              sx={{
+                                minWidth: 0,
+                                wordBreak: "break-word",
+                                overflowWrap: "anywhere",
+                              }}
+                            >
+                              {focus}
+                            </Box>
                           </Box>
                         ))}
                       </Stack>
 
                       {matchedCodebases.length > 0 && (
-                        <Box sx={{ mt: 2.5 }}>
+                        <Box sx={{ mt: 2.5, minWidth: 0 }}>
                           <Typography
                             sx={{
                               color,
@@ -313,7 +361,12 @@ export default function ProjectsDetailBody({
                             Related codebases
                           </Typography>
 
-                          <Stack direction="row" gap={1} flexWrap="wrap">
+                          <Stack
+                            direction="row"
+                            gap={1}
+                            flexWrap="wrap"
+                            sx={{ minWidth: 0 }}
+                          >
                             {matchedCodebases.map((codebase) => (
                               <Chip
                                 key={codebase.slug}
@@ -324,6 +377,7 @@ export default function ProjectsDetailBody({
                                 to={codebase.routePath}
                                 clickable
                                 sx={{
+                                  maxWidth: "100%",
                                   color,
                                   borderColor: hexToRgba(color, 0.45),
                                   bgcolor: hexToRgba(color, 0.08),
@@ -331,6 +385,11 @@ export default function ProjectsDetailBody({
                                   textDecoration: "none",
                                   "& .MuiChip-icon": {
                                     color,
+                                  },
+                                  "& .MuiChip-label": {
+                                    whiteSpace: "normal",
+                                    wordBreak: "break-word",
+                                    overflowWrap: "anywhere",
                                   },
                                   "&:hover": {
                                     bgcolor: hexToRgba(color, 0.16),

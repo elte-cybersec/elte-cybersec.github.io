@@ -8,8 +8,7 @@ export default function HeaderNavTabs() {
       sx={{
         display: "flex",
         justifyContent: "center",
-        pt: 1.25,
-        pb: 0.75,
+        px: 2,
         backgroundColor: "transparent",
       }}
     >
@@ -27,8 +26,8 @@ export default function HeaderNavTabs() {
           bgcolor: "background.paper",
           boxShadow:
             theme.palette.mode === "dark"
-              ? "0 4px 20px rgba(0,0,0,0.25)"
-              : "0 4px 20px rgba(0,0,0,0.08)",
+              ? "0 6px 24px rgba(0,0,0,0.45)"
+              : "0 6px 22px rgba(0,0,0,0.12)",
           width: "fit-content",
           maxWidth: "calc(100% - 16px)",
         })}
@@ -56,13 +55,13 @@ export default function HeaderNavTabs() {
                 isDark
                   ? theme.palette.primary.light
                   : theme.palette.primary.dark,
-                isDark ? 0.16 : 0.12
+                isDark ? 0.18 : 0.14
               );
 
               return {
                 textTransform: "none",
                 fontWeight: 700,
-                fontSize: { xs: "0.95rem", md: "1.15rem" },
+                fontSize: { xs: "0.92rem", md: "1.08rem" },
                 px: { xs: 1.1, md: 1.9 },
                 py: { xs: 0.8, md: 0.95 },
                 borderRadius: 999,

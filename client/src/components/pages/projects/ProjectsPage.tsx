@@ -49,17 +49,30 @@ export default function ProjectsPage({ codebases = [] }: ProjectsPageProps) {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 2, md: 3 } }}>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 3.5 }}>
+    <Container
+      maxWidth="lg"
+      sx={{
+        py: { xs: 2, md: 3 },
+        overflowX: "hidden",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 3.5,
+          minWidth: 0,
+        }}
+      >
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1.5fr 0.8fr" },
+            gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.5fr) minmax(0, 0.8fr)" },
             gap: 3,
-            alignItems: "end",
+            alignItems: { xs: "start", md: "end" },
           }}
         >
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 color: "primary.main",
@@ -77,11 +90,12 @@ export default function ProjectsPage({ codebases = [] }: ProjectsPageProps) {
               component="h1"
               sx={{
                 color: "text.primary",
-                fontSize: { xs: "2.2rem", md: "4rem" },
+                fontSize: { xs: "2rem", sm: "2.4rem", md: "4rem" },
                 fontWeight: 900,
                 letterSpacing: "-0.06em",
                 lineHeight: 0.95,
                 mb: 2,
+                wordBreak: "break-word",
               }}
             >
               Projects Overview
@@ -104,8 +118,9 @@ export default function ProjectsPage({ codebases = [] }: ProjectsPageProps) {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: 1.5,
+              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+              gap: { xs: 1, sm: 1.5 },
+              minWidth: 0,
             }}
           >
             <StatCard value={projects.length} label="Main Projects" />
@@ -124,6 +139,7 @@ export default function ProjectsPage({ codebases = [] }: ProjectsPageProps) {
             borderColor: "divider",
             bgcolor: "background.paper",
             p: { xs: 2, md: 3 },
+            minWidth: 0,
             backgroundImage: `
               linear-gradient(rgba(32, 199, 207, 0.035) 1px, transparent 1px),
               linear-gradient(90deg, rgba(32, 199, 207, 0.035) 1px, transparent 1px),
@@ -136,12 +152,20 @@ export default function ProjectsPage({ codebases = [] }: ProjectsPageProps) {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 360px" },
+              gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) 360px" },
               gap: 3,
               alignItems: "center",
+              minWidth: 0,
             }}
           >
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                minWidth: 0,
+              }}
+            >
               <ProjectsOrbitMap
                 projects={projects}
                 activeSlug={activeProject.slug}
@@ -159,6 +183,7 @@ export default function ProjectsPage({ codebases = [] }: ProjectsPageProps) {
                   letterSpacing: "0.18em",
                   textTransform: "uppercase",
                   opacity: 0.7,
+                  textAlign: "center",
                 }}
               >
                 <TouchAppOutlinedIcon sx={{ fontSize: "0.9rem" }} />
@@ -166,7 +191,9 @@ export default function ProjectsPage({ codebases = [] }: ProjectsPageProps) {
               </Box>
             </Box>
 
-            <ProjectsInfoDevice project={activeProject} index={activeIndex} />
+            <Box sx={{ minWidth: 0 }}>
+              <ProjectsInfoDevice project={activeProject} index={activeIndex} />
+            </Box>
           </Box>
         </Paper>
 
@@ -185,11 +212,13 @@ function StatCard({ value, label }: { value: number; label: string }) {
     <Paper
       elevation={0}
       sx={{
-        p: { xs: 1.5, md: 2 },
+        p: { xs: 1.2, sm: 1.5, md: 2 },
         borderRadius: 3,
         border: "1px solid",
         borderColor: "divider",
         bgcolor: "background.paper",
+        minWidth: 0,
+        overflow: "hidden",
         backgroundImage:
           "radial-gradient(circle at top left, rgba(32, 199, 207, 0.14), transparent 55%)",
       }}
@@ -197,7 +226,7 @@ function StatCard({ value, label }: { value: number; label: string }) {
       <Typography
         sx={{
           color: "text.primary",
-          fontSize: { xs: "1.4rem", md: "1.9rem" },
+          fontSize: { xs: "1.25rem", sm: "1.45rem", md: "1.9rem" },
           fontWeight: 900,
           lineHeight: 1,
         }}
@@ -208,11 +237,12 @@ function StatCard({ value, label }: { value: number; label: string }) {
       <Typography
         sx={{
           color: "text.secondary",
-          fontSize: "0.7rem",
+          fontSize: { xs: "0.62rem", sm: "0.7rem" },
           fontWeight: 800,
           letterSpacing: "0.08em",
           textTransform: "uppercase",
           mt: 0.8,
+          wordBreak: "break-word",
         }}
       >
         {label}

@@ -3,6 +3,15 @@ import { themeTokens, type ThemeMode } from "../src/data/themeTokens";
 
 export type { ThemeMode };
 
+declare module "@mui/material/styles" {
+  interface Palette {
+    brandNavy: Palette["primary"];
+  }
+  interface PaletteOptions {
+    brandNavy?: PaletteOptions["primary"];
+  }
+}
+
 export function createAppTheme(mode: ThemeMode) {
   const tokens = themeTokens[mode];
   const isDark = mode === "dark";
@@ -19,6 +28,12 @@ export function createAppTheme(mode: ThemeMode) {
       secondary: {
         main: tokens.secondaryMain,
         contrastText: isDark ? tokens.backgroundDefault : tokens.white,
+      },
+      brandNavy: {
+        main: tokens.brandNavyMain,
+        light: tokens.brandNavyLight,
+        dark: tokens.brandNavyDark,
+        contrastText: tokens.brandNavyContrast,
       },
       background: {
         default: tokens.backgroundDefault,
