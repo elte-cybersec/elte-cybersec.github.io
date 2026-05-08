@@ -19,6 +19,7 @@ import ScrollToTop from "./ScrollToTop";
 import ResearchPage from "./components/pages/research/ResearchPage";
 import OperationsPage from "./components/pages/operations/OperationsPage";
 import ProjectsPage from "./components/pages/projects/ProjectsPage";
+import GalleryPage from "./components/pages/gallery/GalleryPage";
 
 export default function App() {
   const repositoryPages = getRepositoryPages();
@@ -55,6 +56,7 @@ export default function App() {
               <Route path="tools/:slug" element={<ToolDetailsPage />}
             />
 
+            <Route path="gallery" element={<GalleryPage />} />
 
             <Route
               path="repos/:projectSlug"

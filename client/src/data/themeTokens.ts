@@ -21,6 +21,18 @@ export interface AppThemeTokens {
 
   onPrimaryDark: string;
   onPrimaryLight: string;
+
+  pcbSubstrate: string;
+  pcbSubstrateAccent: string;
+  pcbSubstrateEdge: string;
+  pcbTraceGold: string;
+  pcbTraceGoldDim: string;
+  pcbTeal: string;
+  pcbTealDim: string;
+  pcbChipBody: string;
+  pcbChipFrame: string;
+  pcbLabel: string;
+  pcbViaCore: string;
 }
 
 export const themeTokens: Record<ThemeMode, AppThemeTokens> = {
@@ -45,6 +57,18 @@ export const themeTokens: Record<ThemeMode, AppThemeTokens> = {
 
     onPrimaryDark: "#ffffff",
     onPrimaryLight: "#111111",
+
+    pcbSubstrate: "#1d9aa8",
+    pcbSubstrateAccent: "#2bb5c2",
+    pcbSubstrateEdge: "#106d78",
+    pcbTraceGold: "#e8c558",
+    pcbTraceGoldDim: "#a88a30",
+    pcbTeal: "#0a3a40",
+    pcbTealDim: "#0a3a40",
+    pcbChipBody: "#0a4248",
+    pcbChipFrame: "#e8c558",
+    pcbLabel: "#f5d97a",
+    pcbViaCore: "#e8c558",
   },
 
   dark: {
@@ -68,5 +92,17 @@ export const themeTokens: Record<ThemeMode, AppThemeTokens> = {
 
     onPrimaryDark: "#ffffff",
     onPrimaryLight: "#111111",
+
+    pcbSubstrate: "#0d4a52",
+    pcbSubstrateAccent: "#136068",
+    pcbSubstrateEdge: "#072a30",
+    pcbTraceGold: "#d4b76a",
+    pcbTraceGoldDim: "#9a8048",
+    pcbTeal: "#10aeb4",
+    pcbTealDim: "#0a5a5e",
+    pcbChipBody: "#082528",
+    pcbChipFrame: "#d4b76a",
+    pcbLabel: "#e8c558",
+    pcbViaCore: "#d4b76a",
   },
 };

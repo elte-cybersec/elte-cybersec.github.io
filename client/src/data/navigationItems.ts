@@ -11,4 +11,5 @@ export const navigationItems: NavigationItem[] = [
   { label: "Publications", path: "/publications" },
   { label: "Team", path: "/team" },
   { label: "Mini Apps", path: "/tools" },
+   { label: "Gallery", path: "/gallery" },
 ];
