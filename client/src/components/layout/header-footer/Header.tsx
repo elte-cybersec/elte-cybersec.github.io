@@ -29,8 +29,8 @@ export default function Header({ sticky = true }: HeaderProps) {
 
   const logoHeight = isXs ? 30 : isMd ? 36 : 44;
 
-  const baseNavyColor = isLight ? "brandNavy.light" : "brandNavy.dark";
-  const hoverNavyColor = isLight ? "brandNavy.dark" : "brandNavy.light";
+  const baseNavyColor = isLight ? "brandNavy.light" : "#ffffff"  ;
+  const hoverNavyColor = isLight ? "#ffffff" : "brandNavy.dark" ;
 
   return (
     <>

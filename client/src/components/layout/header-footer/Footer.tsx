@@ -16,8 +16,8 @@ interface FooterIconProps {
 
 function FooterIconLink({ label, icon, href, to, external }: FooterIconProps) {
   const buttonSx = {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     border: "1px solid rgba(255,255,255,0.22)",
     borderRadius: "10px",
     color: "rgba(255,255,255,0.85)",
@@ -35,19 +35,20 @@ function FooterIconLink({ label, icon, href, to, external }: FooterIconProps) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 0.5,
+        gap: 0.6,
       }}
     >
       <Tooltip title={label} placement="top">
         <IconButton sx={buttonSx} size="small" disableRipple aria-label={label}>
-          <Box sx={{ fontSize: "1.15rem", display: "flex" }}>{icon}</Box>
+          <Box sx={{ fontSize: "1.25rem", display: "flex" }}>{icon}</Box>
         </IconButton>
       </Tooltip>
+
       <Typography
         sx={{
-          fontSize: "0.65rem",
-          color: "rgba(255,255,255,0.55)",
-          letterSpacing: "0.04em",
+          fontSize: "0.68rem",
+          color: "rgba(255,255,255,0.62)",
+          letterSpacing: "0.05em",
           textTransform: "uppercase",
           lineHeight: 1,
         }}
@@ -93,7 +94,9 @@ export default function Footer() {
         sx={{
           bgcolor: isLight ? "brandNavy.light" : "brandNavy.dark",
           color: "brandNavy.contrastText",
-          mt: 6,
+
+          // Keep this 0 so the gray space before the footer stays removed.
+          mt: 0,
         }}
       >
         <Box
@@ -101,57 +104,80 @@ export default function Footer() {
             maxWidth: 1400,
             mx: "auto",
             px: { xs: 2.5, md: 5 },
-            pt: { xs: 3.5, md: 4.5 },
-            pb: { xs: 2, md: 2.5 },
+
+            // This brings back nice spacing inside the footer.
+            pt: { xs: 2.5, md: 3 },
+            pb: { xs: 2.4, md: 3 },
+
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
-            alignItems: "flex-start",
+            alignItems: { xs: "flex-start", md: "center" },
             justifyContent: "space-between",
-            gap: { xs: 3, md: 4 },
+            gap: { xs: 3, md: 5 },
           }}
         >
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              gap: 1.2,
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "flex-start", sm: "center" },
+              gap: { xs: 1.6, sm: 3 },
               minWidth: 0,
             }}
           >
-            <ElteInformaticsLogo height={40} color="#ffffff" />
+            <ElteInformaticsLogo height={48} color="#ffffff" />
 
-            <Typography
+            <Divider
+              orientation="vertical"
+              flexItem
               sx={{
-                color: "rgba(255,255,255,0.92)",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                lineHeight: 1.4,
-                mt: 0.5,
+                display: { xs: "none", sm: "block" },
+                borderColor: "rgba(255,255,255,0.35)",
+                height: 54,
+                alignSelf: "center",
+              }}
+            />
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 0.8,
               }}
             >
-              Cybersecurity Lab · Department of Computer Algebra
-            </Typography>
+              <Typography
+                sx={{
+                  color: "rgba(255,255,255,0.94)",
+                  fontSize: { xs: "0.82rem", md: "0.9rem" },
+                  fontWeight: 700,
+                  lineHeight: 1.35,
+                }}
+              >
+                Cybersecurity Lab · Department of Computer Algebra
+              </Typography>
 
-            <Typography
-              sx={{
-                color: "rgba(255,255,255,0.72)",
-                fontSize: "0.78rem",
-                lineHeight: 1.55,
-              }}
-            >
-              H-1117 Budapest, Pázmány Péter sétány 1/C
-              <br />
-              Eötvös Loránd University · Faculty of Informatics
-            </Typography>
+              <Typography
+                sx={{
+                  color: "rgba(255,255,255,0.75)",
+                  fontSize: { xs: "0.76rem", md: "0.82rem" },
+                  lineHeight: 1.65,
+                  letterSpacing: "0.01em",
+                }}
+              >
+                H-1117 Budapest, Pázmány Péter sétány 1/C
+                <br />
+                Eötvös Loránd University · Faculty of Informatics
+              </Typography>
+            </Box>
           </Box>
 
           <Box
             sx={{
               display: "flex",
               alignItems: "flex-start",
-              gap: 2,
+              gap: 2.2,
               flexShrink: 0,
-              mt: { xs: 0, md: 0.5 },
+              transform: { xs: "none", md: "translateY(-6px)" },
             }}
           >
             <FooterIconLink
@@ -159,6 +185,7 @@ export default function Footer() {
               icon={<MdOutlineMailOutline />}
               to="/contact"
             />
+
             <FooterIconLink
               label="GitHub"
               icon={<FaGithub />}

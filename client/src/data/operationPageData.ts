@@ -5,6 +5,7 @@ export interface ProjectRole {
   axisX: "theory" | "practice";
   axisY: "builds" | "breaks";
   color: string;
+  lightColor: string;
 }
 
 export interface OperationPrinciple {
@@ -41,6 +42,7 @@ export const operationPageData: OperationPageData = {
       axisX: "theory",
       axisY: "builds",
       color: "#93c5fd",
+      lightColor: "#2563eb",
     },
     {
       id: "engineer",
@@ -49,6 +51,7 @@ export const operationPageData: OperationPageData = {
       axisX: "practice",
       axisY: "builds",
       color: "#5eead4",
+      lightColor: "#0f766e",
     },
     {
       id: "attacker",
@@ -57,6 +60,7 @@ export const operationPageData: OperationPageData = {
       axisX: "theory",
       axisY: "breaks",
       color: "#f0abfc",
+      lightColor: "#a21caf",
     },
     {
       id: "evaluator",
@@ -65,6 +69,7 @@ export const operationPageData: OperationPageData = {
       axisX: "practice",
       axisY: "breaks",
       color: "#c4b5fd",
+      lightColor: "#7c3aed",
     },
   ],
 

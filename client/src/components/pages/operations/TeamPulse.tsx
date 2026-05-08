@@ -24,7 +24,7 @@ export default function TeamPulse() {
           <polygon
             key={i}
             points={hex.points}
-            fill={hovered ? `${primary}1a` : "#061a1c"}
+            fill={`${primary}1a`}
             stroke={hex.color}
             strokeWidth={hovered ? 1.5 : 1.2}
             style={{ transition: "fill 0.25s ease, stroke-width 0.25s ease" }}

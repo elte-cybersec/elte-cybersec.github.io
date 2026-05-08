@@ -54,9 +54,9 @@ export default function ShareOrbit() {
           x={40}
           y={42}
           width={20}
-          height={16}
+          height={20}
           rx={2}
-          fill="#061a1c"
+          fill={`${primary}1a`}
           stroke={primary}
           strokeWidth={1}
         />

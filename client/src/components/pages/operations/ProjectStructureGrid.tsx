@@ -6,8 +6,12 @@ interface ProjectStructureGridProps {
   roles: ProjectRole[];
 }
 
-export default function ProjectStructureGrid({ roles }: ProjectStructureGridProps) {
+export default function ProjectStructureGrid({
+  roles,
+}: ProjectStructureGridProps) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   const [activeId, setActiveId] = useState<string | null>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
 
@@ -17,8 +21,13 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
     return () => clearTimeout(t);
   }, [hasAnimated]);
 
-  const getRole = (axisX: "theory" | "practice", axisY: "builds" | "breaks") =>
-    roles.find((r) => r.axisX === axisX && r.axisY === axisY);
+  const getRoleColor = (role: ProjectRole) =>
+    isDark ? role.color : role.lightColor;
+
+  const getRole = (
+    axisX: "theory" | "practice",
+    axisY: "builds" | "breaks"
+  ) => roles.find((r) => r.axisX === axisX && r.axisY === axisY);
 
   const quadrants = [
     { axisX: "theory" as const, axisY: "builds" as const, order: 0 },
@@ -27,14 +36,19 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
     { axisX: "practice" as const, axisY: "breaks" as const, order: 3 },
   ];
 
-  const activeRole = activeId ? roles.find((r) => r.id === activeId) ?? null : null;
+  const activeRole = activeId
+    ? roles.find((r) => r.id === activeId) ?? null
+    : null;
 
-  const axisColor = theme.palette.mode === "dark" ? "#9ca3af" : "#6b7280";
-  const quadrantBg = theme.palette.mode === "dark" ? "#061a1c" : "#f7fbfc";
-  const dividerColor =
-    theme.palette.mode === "dark"
-      ? `${theme.palette.primary.main}50`
-      : `${theme.palette.primary.main}55`;
+  const activeRoleColor = activeRole ? getRoleColor(activeRole) : undefined;
+
+  const axisColor = isDark ? "#9ca3af" : "#475569";
+  const quadrantBg = isDark ? "#061a1c" : "#ffffff";
+  const inactiveBg = isDark ? quadrantBg : "transparent";
+
+  const dividerColor = isDark
+    ? `${theme.palette.primary.main}50`
+    : `${theme.palette.primary.main}55`;
 
   return (
     <Box
@@ -64,11 +78,12 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
             fontSize: "0.65rem",
             color: axisColor,
             letterSpacing: "0.2em",
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
           BUILDS
         </Typography>
+
         <Typography
           sx={{
             position: "absolute",
@@ -78,11 +93,12 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
             fontSize: "0.65rem",
             color: axisColor,
             letterSpacing: "0.2em",
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
           BREAKS / MEASURES
         </Typography>
+
         <Typography
           sx={{
             position: "absolute",
@@ -93,11 +109,12 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
             fontSize: "0.65rem",
             color: axisColor,
             letterSpacing: "0.2em",
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
           THEORY
         </Typography>
+
         <Typography
           sx={{
             position: "absolute",
@@ -108,7 +125,7 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
             fontSize: "0.65rem",
             color: axisColor,
             letterSpacing: "0.2em",
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
           PRACTICE
@@ -124,6 +141,7 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
             borderTop: `1px dashed ${dividerColor}`,
           }}
         />
+
         <Box
           sx={{
             position: "absolute",
@@ -149,9 +167,8 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
             const role = getRole(q.axisX, q.axisY);
             if (!role) return <Box key={idx} />;
 
+            const roleColor = getRoleColor(role);
             const isActive = role.id === activeId;
-            const inactiveBg =
-              theme.palette.mode === "dark" ? quadrantBg : "transparent";
 
             return (
               <Box
@@ -162,7 +179,9 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    setActiveId((prev) => (prev === role.id ? null : role.id));
+                    setActiveId((prev) =>
+                      prev === role.id ? null : role.id
+                    );
                   }
                 }}
                 tabIndex={0}
@@ -170,8 +189,8 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
                 aria-pressed={isActive}
                 aria-label={`${role.role}: ${role.description}`}
                 sx={{
-                  bgcolor: isActive ? `${role.color}1f` : inactiveBg,
-                  border: `1.5px solid ${role.color}`,
+                  bgcolor: isActive ? `${roleColor}1f` : inactiveBg,
+                  border: `1.5px solid ${roleColor}`,
                   borderWidth: isActive ? 2 : 1.5,
                   borderRadius: 2,
                   p: 1.5,
@@ -186,31 +205,36 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
                   WebkitTapHighlightColor: "transparent",
                   opacity: hasAnimated ? 1 : 0,
                   transform: hasAnimated ? "scale(1)" : "scale(0.8)",
-                  transition: `opacity 420ms ease-out ${q.order * 100}ms, transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1) ${q.order * 100}ms, background-color 0.2s ease, border-width 0.2s ease`,
+                  transition: `opacity 420ms ease-out ${
+                    q.order * 100
+                  }ms, transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1) ${
+                    q.order * 100
+                  }ms, background-color 0.2s ease, border-width 0.2s ease`,
                   "&:hover": {
-                    bgcolor: `${role.color}14`,
+                    bgcolor: `${roleColor}14`,
                   },
                   "&:focus-visible": {
-                    boxShadow: `0 0 0 3px ${role.color}55`,
+                    boxShadow: `0 0 0 3px ${roleColor}55`,
                   },
                 }}
               >
                 <Typography
                   sx={{
-                    color: role.color,
-                    fontWeight: 500,
+                    color: roleColor,
+                    fontWeight: 600,
                     fontSize: { xs: "0.85rem", md: "0.95rem" },
                     mb: 0.25,
                   }}
                 >
                   {role.role}
                 </Typography>
+
                 <Typography
                   sx={{
                     color: axisColor,
                     fontSize: "0.6rem",
                     letterSpacing: "0.1em",
-                    fontWeight: 500,
+                    fontWeight: 600,
                     textTransform: "uppercase",
                   }}
                 >
@@ -230,12 +254,18 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
           pt: { xs: 0, md: 2 },
         }}
       >
-        {activeRole ? (
+        {activeRole && activeRoleColor ? (
           <Box
             key={activeRole.id}
             sx={{
-              borderLeft: { xs: "none", md: `2px solid ${activeRole.color}` },
-              borderTop: { xs: `2px solid ${activeRole.color}`, md: "none" },
+              borderLeft: {
+                xs: "none",
+                md: `2px solid ${activeRoleColor}`,
+              },
+              borderTop: {
+                xs: `2px solid ${activeRoleColor}`,
+                md: "none",
+              },
               pl: { xs: 0, md: 3 },
               pt: { xs: 2, md: 0 },
               animation: "detailSlideIn 0.32s ease-out",
@@ -250,23 +280,25 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
                 fontSize: "0.7rem",
                 color: axisColor,
                 letterSpacing: "0.15em",
-                fontWeight: 500,
+                fontWeight: 600,
                 mb: 1,
                 textTransform: "uppercase",
               }}
             >
               Role · {activeRole.axisY} · {activeRole.axisX}
             </Typography>
+
             <Typography
               sx={{
                 fontSize: { xs: "1.1rem", md: "1.25rem" },
-                fontWeight: 500,
-                color: activeRole.color,
+                fontWeight: 600,
+                color: activeRoleColor,
                 mb: 1.5,
               }}
             >
               {activeRole.role}
             </Typography>
+
             <Typography
               sx={{
                 fontSize: { xs: "0.875rem", md: "0.95rem" },
@@ -290,7 +322,7 @@ export default function ProjectStructureGrid({ roles }: ProjectStructureGridProp
             <Typography
               variant="caption"
               sx={{
-                color: "text.disabled",
+                color: axisColor,
                 fontSize: "0.8rem",
                 fontStyle: "italic",
               }}

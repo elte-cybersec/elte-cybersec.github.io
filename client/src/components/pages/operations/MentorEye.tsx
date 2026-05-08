@@ -45,7 +45,7 @@ export default function MentorEye() {
           cy={50}
           rx={36}
           ry={28}
-          fill="#072024"
+          fill={`${primary}1a`}
           stroke={primary}
           strokeWidth={1.2}
         />
@@ -54,7 +54,7 @@ export default function MentorEye() {
           cy={irisPos.cy}
           rx={12}
           ry={12}
-          fill="#0a3a3a"
+          fill={`${primary}1a`}
           stroke={primary}
           strokeWidth={0.8}
           style={{ transition: "cx 0.08s linear, cy 0.08s linear" }}
