@@ -9,6 +9,8 @@ import BoardSectionC from "./desktop/BoardSectionC";
 import BoardSectionMobile from "./mobile/BoardSectionMobile";
 import NavButton from "./NavButton";
 
+import { usePCBPalette } from "./parts/Usepcbpalette";
+
 const TRANSITION_MS = 500;
 
 function renderBoard(page: Page) {
@@ -28,6 +30,7 @@ export default function GalleryPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isDark = theme.palette.mode === "dark";
+  const palette = usePCBPalette();
 
   const pages = useMemo(
     () => buildGalleryPages(galleryPhotos, isMobile),
@@ -38,6 +41,7 @@ export default function GalleryPage() {
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const transitionTimeoutRef = useRef<number | null>(null);
+  const incomingRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     return () => {
@@ -48,6 +52,23 @@ export default function GalleryPage() {
   }, []);
 
   const isTransitioning = incomingIndex !== null;
+
+  useEffect(() => {
+    if (incomingIndex === null) return;
+    const el = incomingRef.current;
+    if (!el) return;
+    const startTransform = direction === "right" ? "translateX(100%)" : "translateX(-100%)";
+    el.style.transition = "none";
+    el.style.transform = startTransform;
+    const rafId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!incomingRef.current) return;
+        incomingRef.current.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+        incomingRef.current.style.transform = "translateX(0)";
+      });
+    });
+    return () => cancelAnimationFrame(rafId);
+  }, [incomingIndex, direction]);
 
   const goTo = (nextIndex: number, dir: "left" | "right") => {
     if (isTransitioning) return;
@@ -88,8 +109,6 @@ export default function GalleryPage() {
       : "translateX(100%)"
     : "translateX(0)";
 
-  const incomingStart = direction === "right" ? "translateX(100%)" : "translateX(-100%)";
-
   const boardShadow = isDark
     ? "0 18px 40px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04)"
     : "0 18px 40px rgba(20, 35, 70, 0.35), 0 4px 12px rgba(20, 35, 70, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12)";
@@ -124,6 +143,7 @@ export default function GalleryPage() {
             overflow: "hidden",
             borderRadius: { xs: 2, md: 3 },
             boxShadow: boardShadow,
+            backgroundColor: palette.substrateEdge,
           }}
         >
           <Box
@@ -139,20 +159,13 @@ export default function GalleryPage() {
 
           {incomingPage && (
             <Box
+              ref={incomingRef}
               sx={{
                 position: "absolute",
                 top: 0,
                 left: 0,
                 width: "100%",
                 height: "100%",
-                transition: `transform ${TRANSITION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-              }}
-              ref={(el: HTMLDivElement | null) => {
-                if (el) {
-                  el.style.transform = incomingStart;
-                  void el.offsetWidth;
-                  el.style.transform = "translateX(0)";
-                }
               }}
             >
               {renderBoard(incomingPage)}

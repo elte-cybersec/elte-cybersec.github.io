@@ -30,21 +30,21 @@ export default function BoardSectionA({ photos }: BoardSectionAProps) {
         fadeId="boardFadeA"
       />
 
-      <Trace weight="primary" d="M 386 105 L 420 105 L 460 182 L 510 182" />
-      <Trace weight="primary" d="M 386 135 L 425 135 L 465 198 L 510 198" />
-      <Trace weight="primary" d="M 386 165 L 430 165 L 470 214 L 510 214" />
-      <Trace weight="primary" d="M 386 195 L 435 195 L 475 230 L 510 230" />
 
-      <Trace weight="primary" d="M 714 105 L 680 105 L 640 182 L 590 182" />
-      <Trace weight="primary" d="M 714 135 L 675 135 L 635 198 L 590 198" />
-      <Trace weight="primary" d="M 714 165 L 670 165 L 630 214 L 590 214" />
-      <Trace weight="primary" d="M 714 195 L 665 195 L 625 230 L 590 230" />
+      <Trace weight="primary" d="M 386 165 L 425 165 L 465 198 L 510 198" />
+      <Trace weight="primary" d="M 386 195 L 430 195 L 470 214 L 510 214" />
+      <Trace weight="primary" d="M 386 225 L 435 225 L 475 230 L 510 230" />
 
-      <Trace weight="primary" d="M 386 405 L 420 405 L 460 482 L 510 482" />
+
+      <Trace weight="primary" d="M 714 165 L 675 165 L 635 198 L 590 198" />
+      <Trace weight="primary" d="M 714 195 L 670 195 L 630 214 L 590 214" />
+      <Trace weight="primary" d="M 714 225 L 665 225 L 625 230 L 590 230" />
+
+
       <Trace weight="primary" d="M 386 435 L 425 435 L 465 498 L 510 498" />
       <Trace weight="primary" d="M 386 465 L 430 465 L 470 514 L 510 514" />
 
-      <Trace weight="primary" d="M 714 425 L 680 425 L 640 482 L 590 482" />
+
       <Trace weight="primary" d="M 714 455 L 675 455 L 635 498 L 590 498" />
       <Trace weight="primary" d="M 714 485 L 670 485 L 630 514 L 590 514" />
 
@@ -64,31 +64,18 @@ export default function BoardSectionA({ photos }: BoardSectionAProps) {
       <Trace weight="primary" d="M 460 390 L 460 410 L 530 410 L 530 450" />
       <Trace weight="primary" d="M 622 390 L 622 410 L 570 410 L 570 450" />
 
-      <Trace weight="secondary" d="M 60 60 L 130 60 L 150 80 L 230 80" />
-      <Trace weight="secondary" d="M 60 240 L 130 240 L 150 260 L 220 260" />
-      <Trace weight="secondary" d="M 870 60 L 940 60 L 960 80 L 1040 80" />
-      <Trace weight="secondary" d="M 870 240 L 940 240 L 960 260 L 1040 260" />
-      <Trace weight="secondary" d="M 60 410 L 130 410 L 150 430 L 220 430" />
-      <Trace weight="secondary" d="M 60 620 L 130 620 L 150 640 L 230 640" />
-      <Trace weight="secondary" d="M 870 410 L 940 410 L 960 430 L 1040 430" />
-      <Trace weight="secondary" d="M 870 620 L 940 620 L 960 640 L 1040 640" />
 
-      <Via cx={420} cy={105} />
-      <Via cx={460} cy={182} />
+
+
+
       <Via cx={465} cy={198} />
       <Via cx={470} cy={214} />
       <Via cx={475} cy={230} />
-      <Via cx={680} cy={105} />
-      <Via cx={640} cy={182} />
       <Via cx={635} cy={198} />
       <Via cx={630} cy={214} />
       <Via cx={625} cy={230} />
-      <Via cx={420} cy={405} />
-      <Via cx={460} cy={482} />
       <Via cx={465} cy={498} />
       <Via cx={470} cy={514} />
-      <Via cx={680} cy={425} />
-      <Via cx={640} cy={482} />
       <Via cx={635} cy={498} />
       <Via cx={630} cy={514} />
       <Via cx={460} cy={100} />
@@ -101,14 +88,7 @@ export default function BoardSectionA({ photos }: BoardSectionAProps) {
       <Via cx={648} cy={580} />
       <Via cx={530} cy={350} />
       <Via cx={570} cy={350} />
-      <Via cx={150} cy={80} />
-      <Via cx={960} cy={80} />
-      <Via cx={150} cy={260} />
-      <Via cx={960} cy={260} />
-      <Via cx={150} cy={430} />
-      <Via cx={960} cy={430} />
-      <Via cx={150} cy={640} />
-      <Via cx={960} cy={640} />
+
 
       <PhotoSlot x={60} y={80} width={320} height={240} filename={photos[0]} />
       <PhotoSlot x={720} y={60} width={320} height={260} filename={photos[1]} />
