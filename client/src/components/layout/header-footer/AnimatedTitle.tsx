@@ -82,15 +82,16 @@ export default function AnimatedTitle({ title }: AnimatedTitleProps) {
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          px: { xs: 2, sm: 2.5, md: 3.5 },
-          py: { xs: 1.25, md: 1.25 },
-          my: 2.5,
+          maxWidth: "100%",
+          px: { xs: 1.5, sm: 2.5, md: 3.5 },
+          py: { xs: 0.9, sm: 1.25, md: 1.25 },
+          my: { xs: 1, sm: 2, md: 2.5 },
           textDecoration: "none",
-          border: `5px solid ${navyBorder}`,
+          border: { xs: `3px solid ${navyBorder}`, md: `5px solid ${navyBorder}` },
           borderRadius: 999,
           color: theme.palette.text.primary,
           overflow: "hidden",
-          minHeight: { xs: 58, sm: 66, md: 74 },
+          minHeight: { xs: 42, sm: 66, md: 74 },
           backgroundColor: isLight
             ? "rgba(17, 45, 82, 0.06)"
             : "rgba(17, 45, 82, 0.10)",
@@ -111,6 +112,7 @@ export default function AnimatedTitle({ title }: AnimatedTitleProps) {
           display: "flex",
           alignItems: "stretch",
           justifyContent: "center",
+          minWidth: 0,
         }}
       >
         {displayChars.map((char, index) => {
@@ -127,8 +129,8 @@ export default function AnimatedTitle({ title }: AnimatedTitleProps) {
                   : theme.palette.brandNavy.dark;
 
                 return {
-                  minWidth: { xs: "0.9ch", sm: "1ch", md: "1.05ch" },
-                  px: { xs: 0.08, sm: 0.12, md: 0.16 },
+                  minWidth: { xs: "0.75ch", sm: "1ch", md: "1.05ch" },
+                  px: { xs: 0.04, sm: 0.12, md: 0.16 },
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -145,7 +147,7 @@ export default function AnimatedTitle({ title }: AnimatedTitleProps) {
                 sx={(theme) => ({
                   fontFamily: '"Roboto Condensed", "Roboto", sans-serif',
                   fontWeight: 500,
-                  fontSize: { xs: "1.35rem", sm: "1.9rem", md: "2.8rem" },
+                  fontSize: { xs: "0.75rem", sm: "1.9rem", md: "2.8rem" },
                   lineHeight: 1,
                   letterSpacing: 0,
                   color: isSpace
