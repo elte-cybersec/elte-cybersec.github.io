@@ -147,7 +147,7 @@ export default function AnimatedTitle({ title }: AnimatedTitleProps) {
                 sx={(theme) => ({
                   fontFamily: '"Roboto Condensed", "Roboto", sans-serif',
                   fontWeight: 500,
-                  fontSize: { xs: "0.75rem", sm: "1.9rem", md: "2.8rem" },
+                  fontSize: { xs: "0.65rem", sm: "1.9rem", md: "2.8rem" },
                   lineHeight: 1,
                   letterSpacing: 0,
                   color: isSpace
