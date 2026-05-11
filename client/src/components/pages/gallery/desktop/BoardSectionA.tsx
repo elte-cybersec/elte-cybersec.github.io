@@ -12,9 +12,13 @@ export const SECTION_A_SLOTS = 4;
 
 interface BoardSectionAProps {
   photos: string[];
+  onPhotoClick: (filename: string) => void;
 }
 
-export default function BoardSectionA({ photos }: BoardSectionAProps) {
+export default function BoardSectionA({
+  photos,
+  onPhotoClick,
+}: BoardSectionAProps) {
   const palette = usePCBPalette();
 
   return (
@@ -30,20 +34,16 @@ export default function BoardSectionA({ photos }: BoardSectionAProps) {
         fadeId="boardFadeA"
       />
 
-
       <Trace weight="primary" d="M 386 165 L 425 165 L 465 198 L 510 198" />
       <Trace weight="primary" d="M 386 195 L 430 195 L 470 214 L 510 214" />
       <Trace weight="primary" d="M 386 225 L 435 225 L 475 230 L 510 230" />
-
 
       <Trace weight="primary" d="M 714 165 L 675 165 L 635 198 L 590 198" />
       <Trace weight="primary" d="M 714 195 L 670 195 L 630 214 L 590 214" />
       <Trace weight="primary" d="M 714 225 L 665 225 L 625 230 L 590 230" />
 
-
       <Trace weight="primary" d="M 386 435 L 425 435 L 465 498 L 510 498" />
       <Trace weight="primary" d="M 386 465 L 430 465 L 470 514 L 510 514" />
-
 
       <Trace weight="primary" d="M 714 455 L 675 455 L 635 498 L 590 498" />
       <Trace weight="primary" d="M 714 485 L 670 485 L 630 514 L 590 514" />
@@ -63,10 +63,6 @@ export default function BoardSectionA({ photos }: BoardSectionAProps) {
 
       <Trace weight="primary" d="M 460 390 L 460 410 L 530 410 L 530 450" />
       <Trace weight="primary" d="M 622 390 L 622 410 L 570 410 L 570 450" />
-
-
-
-
 
       <Via cx={465} cy={198} />
       <Via cx={470} cy={214} />
@@ -89,11 +85,38 @@ export default function BoardSectionA({ photos }: BoardSectionAProps) {
       <Via cx={530} cy={350} />
       <Via cx={570} cy={350} />
 
-
-      <PhotoSlot x={60} y={80} width={320} height={240} filename={photos[0]} />
-      <PhotoSlot x={720} y={60} width={320} height={260} filename={photos[1]} />
-      <PhotoSlot x={60} y={380} width={320} height={240} filename={photos[2]} />
-      <PhotoSlot x={720} y={400} width={320} height={220} filename={photos[3]} />
+      <PhotoSlot
+        x={60}
+        y={80}
+        width={320}
+        height={240}
+        filename={photos[0]}
+        onPhotoClick={onPhotoClick}
+      />
+      <PhotoSlot
+        x={720}
+        y={60}
+        width={320}
+        height={260}
+        filename={photos[1]}
+        onPhotoClick={onPhotoClick}
+      />
+      <PhotoSlot
+        x={60}
+        y={380}
+        width={320}
+        height={240}
+        filename={photos[2]}
+        onPhotoClick={onPhotoClick}
+      />
+      <PhotoSlot
+        x={720}
+        y={400}
+        width={320}
+        height={220}
+        filename={photos[3]}
+        onPhotoClick={onPhotoClick}
+      />
 
       <ChipQFP x={510} y={170} width={80} height={120} label="U17" />
       <ChipQFP x={510} y={450} width={80} height={80} label="U22" />

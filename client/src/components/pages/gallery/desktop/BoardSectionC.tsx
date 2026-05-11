@@ -12,9 +12,13 @@ export const SECTION_C_SLOTS = 3;
 
 interface BoardSectionCProps {
   photos: string[];
+  onPhotoClick: (filename: string) => void;
 }
 
-export default function BoardSectionC({ photos }: BoardSectionCProps) {
+export default function BoardSectionC({
+  photos,
+  onPhotoClick,
+}: BoardSectionCProps) {
   const palette = usePCBPalette();
 
   return (
@@ -94,9 +98,30 @@ export default function BoardSectionC({ photos }: BoardSectionCProps) {
       <Via cx={150} cy={640} />
       <Via cx={960} cy={640} />
 
-      <PhotoSlot x={60} y={100} width={320} height={240} filename={photos[0]} />
-      <PhotoSlot x={740} y={240} width={320} height={240} filename={photos[1]} />
-      <PhotoSlot x={60} y={440} width={320} height={200} filename={photos[2]} />
+      <PhotoSlot
+        x={60}
+        y={100}
+        width={320}
+        height={240}
+        filename={photos[0]}
+        onPhotoClick={onPhotoClick}
+      />
+      <PhotoSlot
+        x={740}
+        y={240}
+        width={320}
+        height={240}
+        filename={photos[1]}
+        onPhotoClick={onPhotoClick}
+      />
+      <PhotoSlot
+        x={60}
+        y={440}
+        width={320}
+        height={200}
+        filename={photos[2]}
+        onPhotoClick={onPhotoClick}
+      />
 
       <ChipQFP x={484} y={160} width={56} height={80} label="U17" />
       <ChipQFP x={664} y={320} width={76} height={80} label="U21" />

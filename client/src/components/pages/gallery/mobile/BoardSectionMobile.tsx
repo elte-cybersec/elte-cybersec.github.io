@@ -12,9 +12,13 @@ export const SECTION_MOBILE_SLOTS = 1;
 
 interface BoardSectionMobileProps {
   photos: string[];
+  onPhotoClick: (filename: string) => void;
 }
 
-export default function BoardSectionMobile({ photos }: BoardSectionMobileProps) {
+export default function BoardSectionMobile({
+  photos,
+  onPhotoClick,
+}: BoardSectionMobileProps) {
   const palette = usePCBPalette();
 
   return (
@@ -88,9 +92,30 @@ export default function BoardSectionMobile({ photos }: BoardSectionMobileProps) 
       <Via cx={100} cy={680} />
       <Via cx={300} cy={680} />
 
-      <ChipSOIC x={140} y={70} width={100} height={36} label="U22" pinSpacing={10} />
-      <ChipSOIC x={50} y={120} width={60} height={30} label="U23" pinSpacing={9} />
-      <ChipSOIC x={270} y={120} width={60} height={30} label="U24" pinSpacing={9} />
+      <ChipSOIC
+        x={140}
+        y={70}
+        width={100}
+        height={36}
+        label="U22"
+        pinSpacing={10}
+      />
+      <ChipSOIC
+        x={50}
+        y={120}
+        width={60}
+        height={30}
+        label="U23"
+        pinSpacing={9}
+      />
+      <ChipSOIC
+        x={270}
+        y={120}
+        width={60}
+        height={30}
+        label="U24"
+        pinSpacing={9}
+      />
 
       <PhotoSlot
         x={50}
@@ -99,13 +124,49 @@ export default function BoardSectionMobile({ photos }: BoardSectionMobileProps) 
         height={320}
         filename={photos[0]}
         pinSpacing={20}
+        onPhotoClick={onPhotoClick}
       />
 
-      <ChipQFP x={140} y={580} width={100} height={70} label="U17" pinSpacing={10} />
-      <ChipSOIC x={40} y={600} width={50} height={30} label="U25" pinSpacing={9} />
-      <ChipSOIC x={290} y={600} width={50} height={30} label="U26" pinSpacing={9} />
-      <ChipSOIC x={40} y={640} width={50} height={26} label="U27" pinSpacing={9} />
-      <ChipSOIC x={290} y={640} width={50} height={26} label="U28" pinSpacing={9} />
+      <ChipQFP
+        x={140}
+        y={580}
+        width={100}
+        height={70}
+        label="U17"
+        pinSpacing={10}
+      />
+      <ChipSOIC
+        x={40}
+        y={600}
+        width={50}
+        height={30}
+        label="U25"
+        pinSpacing={9}
+      />
+      <ChipSOIC
+        x={290}
+        y={600}
+        width={50}
+        height={30}
+        label="U26"
+        pinSpacing={9}
+      />
+      <ChipSOIC
+        x={40}
+        y={640}
+        width={50}
+        height={26}
+        label="U27"
+        pinSpacing={9}
+      />
+      <ChipSOIC
+        x={290}
+        y={640}
+        width={50}
+        height={26}
+        label="U28"
+        pinSpacing={9}
+      />
 
       <Capacitor cx={20} cy={300} r={8} />
       <Capacitor cx={360} cy={300} r={8} />

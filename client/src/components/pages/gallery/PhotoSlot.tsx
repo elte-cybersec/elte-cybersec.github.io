@@ -8,6 +8,7 @@ interface PhotoSlotProps {
   height: number;
   filename: string;
   pinSpacing?: number;
+  onPhotoClick?: (filename: string) => void;
 }
 
 export default function PhotoSlot({
@@ -17,9 +18,11 @@ export default function PhotoSlot({
   height,
   filename,
   pinSpacing = 15,
+  onPhotoClick,
 }: PhotoSlotProps) {
   const palette = usePCBPalette();
   const isDefault = filename === defaultPhoto;
+  const isClickable = Boolean(onPhotoClick) && !isDefault;
 
   const pinLength = 6;
   const pinThickness = 2;
@@ -29,6 +32,11 @@ export default function PhotoSlot({
 
   const horizontalPinCount = Math.floor((width - pinInset * 2) / pinSpacing);
   const verticalPinCount = Math.floor((height - pinInset * 2) / pinSpacing);
+
+  const handleClick = () => {
+    if (!isClickable) return;
+    onPhotoClick?.(filename);
+  };
 
   const topPins = Array.from({ length: horizontalPinCount }, (_, i) => (
     <rect
@@ -75,7 +83,24 @@ export default function PhotoSlot({
   ));
 
   return (
-    <g>
+    <g
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-label={isClickable ? "Open gallery image preview" : undefined}
+      onClick={handleClick}
+      onKeyDown={(event) => {
+        if (!isClickable) return;
+
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handleClick();
+        }
+      }}
+      style={{
+        cursor: isClickable ? "zoom-in" : "default",
+        outline: "none",
+      }}
+    >
       <image
         href={`${galleryBasePath}${filename}`}
         x={x + inset}
@@ -85,6 +110,7 @@ export default function PhotoSlot({
         preserveAspectRatio="xMidYMid slice"
         opacity={isDefault ? 0.4 : 1}
       />
+
       <rect
         x={x}
         y={y}
@@ -94,7 +120,9 @@ export default function PhotoSlot({
         fill="none"
         stroke={palette.chipFrame}
         strokeWidth={frameStroke}
+        pointerEvents="none"
       />
+
       {isDefault && (
         <text
           x={x + width / 2}
@@ -104,15 +132,24 @@ export default function PhotoSlot({
           fill={palette.label}
           textAnchor="middle"
           opacity={0.6}
+          pointerEvents="none"
         >
           [ empty ]
         </text>
       )}
+
       {topPins}
       {bottomPins}
       {leftPins}
       {rightPins}
-      <circle cx={x + 5} cy={y + 5} r={1.8} fill={palette.tealDim} />
+
+      <circle
+        cx={x + 5}
+        cy={y + 5}
+        r={1.8}
+        fill={palette.tealDim}
+        pointerEvents="none"
+      />
     </g>
   );
 }
