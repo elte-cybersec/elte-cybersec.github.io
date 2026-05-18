@@ -2,7 +2,7 @@ import type { TeamCategory } from "../types";
 
 export const teamData: TeamCategory[] = [
   {
-    category: "Lab Manager",
+    category: "Members",
     members: [
       {
         title: "Dr.",
@@ -10,20 +10,15 @@ export const teamData: TeamCategory[] = [
         familyName: "Alshawki",
         role: "Associate Professor",
         extraInfo:
-          "Supervisor of the ELTE Cybersecurity Lab. Specializes in applied cryptography, AI-driven security, and 6G network resilience.",
+          "Managing the ELTE Cybersecurity Lab. Specializes in applied cryptography, AI-driven security, and 6G network resilience.",
         picture: "avatars/alshawki.jpg",
         link: "https://malshawki.github.io/",
       },
-    ],
-  },
-  {
-    category: "Scientific Team",
-    members: [
       {
         title: "Dr.",
         name: "Péter",
         familyName: "Ligeti",
-        role: "Associate Professor & Head of Department",
+        role: "Associate Professor",
         extraInfo:
           "Head of the Department of Computer Algebra at ELTE. Research covers combinatorial optimization, cryptography, and secret sharing schemes.",
         picture: "avatars/LigetiP.png",
