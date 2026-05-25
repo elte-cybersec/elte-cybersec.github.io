@@ -1,0 +1,11 @@
+\select@language {english} \contentsline {lstlisting}{\numberline {3.1}{\ignorespaces \texttt {resolveAssetPath} utility used by every component that renders an image, avatar, or logo.}}{38}{lstlisting.3.1}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.2}{\ignorespaces \texttt {getRepositoryPages} loads every Markdown file from \texttt {src/content/} as a raw string at build time.}}{39}{lstlisting.3.2}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.3}{\ignorespaces \texttt {slugifyHeading} converts a heading title into a stable identifier.}}{40}{lstlisting.3.3}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.4}{\ignorespaces The first half of \texttt {parseRepositoryDocument}: special-state handling for metadata, the portal block, and code fences.}}{41}{lstlisting.3.4}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.5}{\ignorespaces The second half of \texttt {parseRepositoryDocument}: heading handling and fall-through to content lines.}}{42}{lstlisting.3.5}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.6}{\ignorespaces \texttt {parsePortalMetadataBlock} reads the small key/value block at the top of each document.}}{43}{lstlisting.3.6}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.7}{\ignorespaces \texttt {buildCodebaseMeta} turns the parsed metadata into the shape the CodeBases card uses.}}{45}{lstlisting.3.7}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.8}{\ignorespaces \texttt {sortCodebase} sorts the CodeBases cards by the user-selected mode.}}{46}{lstlisting.3.8}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.9}{\ignorespaces \texttt {searchPublications} combines the type, title, and year filters into one pass over the publication list.}}{47}{lstlisting.3.9}%
+\select@language {english} \contentsline {lstlisting}{\numberline {3.10}{\ignorespaces \texttt {buildGalleryPages} produces the sequence of board pages for the Gallery, picking sections by available slot count and rotating between them.}}{48}{lstlisting.3.10}%
+\select@language {english} \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

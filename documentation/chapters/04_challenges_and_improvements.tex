@@ -1,0 +1,84 @@
+%----------------------------------------------------------------------------
+\chapter{Challenges and Improvements}\label{ch:challenges}
+%----------------------------------------------------------------------------
+
+This chapter records the parts of the project that were difficult, the gaps that exist in the current implementation, and the improvements that would be reasonable to make next. It is meant to be useful both as a reflection on the work done and as a starting point for whoever picks the project up from here.
+
+%-----------------------------------------------------------
+\section{Challenges Faced}\label{sec:challenges-faced}
+
+\subsection{Designing the Right Level of Structure}\label{subsec:challenges-structure}
+
+The biggest challenge during the project was not technical. It was finding the right level of structure for the data. A portal like this has two opposing pressures pulling on it. On one side, the structure has to be strict enough that the pages render predictably: a project needs sub-projects, a member needs a name, a publication needs a year. On the other side, the structure has to be loose enough that the people editing the data files do not feel constrained or have to fight the schema to add normal content.
+
+The first versions of several data files were over-engineered. A project entry, at one point, had separate fields for the abstract, the introduction, the motivation, and the problem statement, because that felt like the right way to break down what a project is. The result was that adding a new project meant filling in four nearly identical paragraphs and the page rendered them as if they were separate sections, which they were not. The fix was to collapse all of that back into a single \texttt{description} field and let the text itself be the structure. The same lesson applied to the publications: an early version had per-entry fields for keywords, methodology, results, and contributions, and was simplified down to a single abstract field and a list of tags.
+
+A related challenge was the codebases data. The Markdown convention described in Chapter~\ref{ch:dev} (one \texttt{\#} title, \texttt{\#\#} topics, \texttt{\#\#\#} sub-topics) is simple enough on its own, but it took several rounds of editing the existing repositories' READMEs to actually make them follow it. Several of the lab's repositories had READMEs that mixed heading levels in non-obvious ways, used bold lines instead of headings, or had decorative banners that confused the parser. Each one had to be re-edited by hand. The lesson here was that a template README and a written convention would have been worth producing on day one rather than at the end.
+
+\subsection{Mobile Layout for the Team Page}\label{subsec:challenges-team-mobile}
+
+The Team page was the one page where a non-trivial mobile bug appeared. The Students Alumni section used a two-column grid with the alumni paired up inside a shared bordered container with a vertical divider between the cards. On desktop this looked clean and saved vertical space. On mobile, two things broke at once. The grid columns were defined with \texttt{1fr}, which defaults to \texttt{minmax(auto, 1fr)} and allows a column to grow to fit its content. The names inside the cards had \texttt{white-space: nowrap} so they would not break across lines. The combination meant that long names like \textit{Arun Chittuparambil Polson} and \textit{Seyed Pedram Mousaviazar} pushed their columns wider than the mobile viewport, which made the entire page scroll horizontally.
+
+The fix used two changes. First, the page now renders different structures on mobile and desktop, switched by a media query at the small breakpoint: on desktop the alumni keep the paired layout, on mobile each alumnus is its own card on its own row. Second, \texttt{min-width: 0} was added to grid cells so that the text ellipsis truncation actually triggers instead of being defeated by the auto-sized column.
+
+This was the only case in the portal where mobile and desktop had to use genuinely different component structures rather than just different styles. As a rule the portal prefers CSS-only responsiveness, but the alumni grid needed two structurally different layouts (paired groups vs.\ single cards) and that was the cleanest way to express it.
+
+\subsection{Long Titles in the Honeycomb}\label{subsec:challenges-honeycomb}
+
+The research honeycomb was harder to lay out than expected. Hexagons have a fixed internal width at every height, and several of the research area titles were longer than that width allowed. \textit{Cryptocurrency and Blockchain Security} is three words and does not fit on a single line inside a hex. \textit{Cloud Security and Digital Identity} is similar. The first version of the honeycomb either truncated these titles with an ellipsis (which lost information) or overflowed them past the hex border (which looked broken).
+
+The fix was a small text-wrapping helper that splits a title across multiple lines based on word count and on a target line length, and renders each line as its own SVG \texttt{<tspan>} centred inside the hex. Two-word titles render on one line, three-word titles render on two lines, longer titles render on three. The honeycomb computes vertical centring based on how many lines the title ends up taking, so titles of different lengths all sit visually centred.
+
+\subsection{Click Feedback on the Honeycomb and Role Grid}\label{subsec:challenges-focus}
+
+The honeycomb and the role grid are clickable SVG elements. By default, when a clickable SVG element is clicked with the mouse, browsers draw a rectangular focus ring around it. That ring looked terrible on a hexagon, because the hex shape itself was carefully drawn and the rectangle on top of it broke the visual.
+
+The fix was a CSS rule that hides the default focus ring on mouse clicks (\texttt{outline: none} on \texttt{:focus:not(:focus-visible)}) and keeps a hex-shaped dashed outline on keyboard focus (\texttt{:focus-visible}). This way mouse users see no rectangular ring, and keyboard users still get an obvious focus indicator that follows the hex shape rather than fighting it. The same fix was applied to the role quadrants on the Operations page.
+
+%-----------------------------------------------------------
+\section{Current Gaps}\label{sec:challenges-gaps}
+
+This section lists the things that are not finished and would need to be picked up by the next person working on the project.
+
+\subsection{Contact Form Backend}\label{subsec:challenges-contact}
+
+The contact form on the Contact page is laid out but is not connected to anything. Submitting it does not currently send a message. The placeholder email and phone (\texttt{contact@example.com} and \texttt{+36 00 000 0000}) also need to be replaced with the lab's real contact details, once the lab decides what to publish.
+
+There are two reasonable ways to wire up the form. The first is a serverless email service such as Formspree or a similar provider, which would let the form post directly to a third-party endpoint and forward the message to a real inbox without the portal needing a backend. This is the simplest approach and fits the current static-only architecture. The second is a small backend service hosted somewhere (a tiny endpoint on a university server, or a cloud function) that receives the form data, stores it, and forwards it. The second approach is more work but gives the lab control over the data, which may be the right call for a university portal.
+
+\subsection{GitHub Actions Automation}\label{subsec:challenges-actions}
+
+The current portal has the README content for each codebase checked in as static Markdown. This was deliberate: the portal works without any GitHub API calls when it is opened, and the lab does not have a hosting setup that supports build-time fetches against authenticated APIs.
+
+The longer-term plan is for the README content to be updated automatically, so that a change to a repository's README on GitHub propagates to the portal without anyone editing the portal. Two options are reasonable here.
+
+The first option is a scheduled GitHub Actions workflow on the portal repository that runs once a week, fetches the latest \texttt{README.md} from each tracked repository, updates the portal's data, and commits the result back to the portal. This is the simpler of the two and the workflow has already been written for it. It is not currently enabled because it requires a GitHub Personal Access Token (PAT) or a fine-grained GitHub App token with read access to the tracked repositories. The token would need to be stored in the portal repository's GitHub Actions secrets. Provisioning this token requires organisation-level permission that was not granted for the project.
+
+The second option is a per-repository workflow on each tracked repository that pushes README changes to the portal whenever the README is committed. This is more responsive (the portal updates within minutes of a README change rather than within a week) but it requires a workflow file and a token in every tracked repository, which is more work to set up and maintain.
+
+Either option requires the access token to be provisioned. Once that is in place, enabling the first option is a one-line change to the workflow file.
+
+\subsection{Admin Dashboard}\label{subsec:challenges-admin}
+
+The strongest case for future work is a small admin dashboard with authentication. The current approach (editing \texttt{.ts} files) is fine for someone comfortable with a code editor, but most lab members are not necessarily comfortable with that, and asking the lab manager to edit code every time a member joins or a publication is added is a friction point.
+
+A dashboard would let an authenticated lab admin add, edit, or remove entries from a form on the website, with the changes saved to a backend store. The form fields would map directly to the data shapes already defined in the data files, so the underlying schema does not need to change; only the editing interface does.
+
+Building this requires a backend with authentication, a database to hold the structured content, and an API surface for the dashboard to read and write through. None of this was in scope for the current project (which was constrained to a static frontend on GitHub Pages), but if the project moves to a different hosting model it would be the most useful single addition.
+
+\subsection{More Mini Apps}\label{subsec:challenges-miniapps}
+
+The Mini Apps page is intentionally extensible. The current set is small (Ancient Cipher and Security Gauntlet) and the page is designed to grow over time as more teaching material is added. Likely candidates for future apps include an interactive demonstration of Diffie-Hellman key exchange, a visual walk-through of RSA encryption and decryption, a Shamir secret-sharing demonstration, and a hash-collision puzzle. Each of these maps to a course topic the lab teaches, and each would be self-contained enough to add as a new tool without affecting the rest of the portal.
+
+A separate idea that came up during the project was an in-portal exam or practice mode where students could solve cybersecurity challenges and submit their solutions. This is interesting but it runs into the same backend constraint as the admin dashboard: running and grading student code reliably requires a server. Without one, the most that could be done client-side is a guided puzzle with predetermined right answers, which is a thinner version of the same idea.
+
+\subsection{Site Configuration and Branding}\label{subsec:challenges-branding}
+
+The portal is currently branded with the ELTE Faculty of Informatics colours and the lab's name. The \texttt{siteConfig.ts} file holds the textual content, but several pieces of branding are still embedded in components (the under-development banner, the decorative PCB motifs on the home page and the gallery boards, the wave animation on the GitHub organisation page). Pulling all of these into the configuration or theme files would make it possible to rebrand the portal for a different lab or a different version of the same lab without touching any code.
+
+%-----------------------------------------------------------
+\section{Closing Notes}\label{sec:challenges-closing}
+
+The project was built with a particular constraint in mind: the lab is going to keep adding content, and the portal has to keep working when they do. The data-driven architecture is what makes that constraint addressable. Every page is one or two data files away from accepting new content, the types catch most mistakes at build time, and the rendering layer adapts to the number of entries it is given rather than being hard-coded to a fixed count.
+
+The constraint the project did not meet, on the other hand, is a person who is not a programmer being able to update the portal without help. That gap is real and it is the single most useful thing to address next. The improvements section above describes how: a backend with authentication, a small admin dashboard, a way for lab members to maintain their own entries without touching the code. Until that is in place, the portal works, but it works on the assumption that whoever is editing the data files is comfortable in a code editor. That is a fair assumption for the first version and a fair starting point for the next one.

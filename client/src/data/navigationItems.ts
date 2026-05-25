@@ -7,9 +7,9 @@ export const navigationItems: NavigationItem[] = [
   { label: "Projects", path: "/projects" },
   { label: "Research", path: "/research" },
   { label: "Operations", path: "/operations" },
-    { label: "CodeBases", path: "/codebases" },
+  { label: "CodeBases", path: "/codebases" },
   { label: "Publications", path: "/publications" },
   { label: "Team", path: "/team" },
   { label: "Mini Apps", path: "/tools" },
-   { label: "Gallery", path: "/gallery" },
+  { label: "Gallery", path: "/gallery" },
 ];

@@ -1,0 +1,92 @@
+\select@language {english} \contentsline {chapter}{\numberline {1}Introduction}{4}{chapter.1}%
+\select@language {english} \contentsline {section}{\numberline {1.1}Why a Dynamic Data-Driven Approach}{4}{section.1.1}%
+\select@language {english} \contentsline {section}{\numberline {1.2}What the Portal Includes}{6}{section.1.2}%
+\select@language {english} \contentsline {section}{\numberline {1.3}Structure of This Document}{6}{section.1.3}%
+\select@language {english} \contentsline {chapter}{\numberline {2}User Documentation}{8}{chapter.2}%
+\select@language {english} \contentsline {section}{\numberline {2.1}Shared Layout}{8}{section.2.1}%
+\select@language {english} \contentsline {subsection}{\numberline {2.1.1}Header}{8}{subsection.2.1.1}%
+\select@language {english} \contentsline {subsection}{\numberline {2.1.2}Navigation Bar}{9}{subsection.2.1.2}%
+\select@language {english} \contentsline {paragraph}{Data file.}{9}{section*.1}%
+\select@language {english} \contentsline {subsection}{\numberline {2.1.3}Footer}{9}{subsection.2.1.3}%
+\select@language {english} \contentsline {paragraph}{Data file.}{10}{section*.2}%
+\select@language {english} \contentsline {section}{\numberline {2.2}Home Page}{10}{section.2.2}%
+\select@language {english} \contentsline {paragraph}{Data file.}{11}{section*.4}%
+\select@language {english} \contentsline {section}{\numberline {2.3}Projects Page}{11}{section.2.3}%
+\select@language {english} \contentsline {paragraph}{Data file.}{13}{section*.6}%
+\select@language {english} \contentsline {section}{\numberline {2.4}Research Page}{14}{section.2.4}%
+\select@language {english} \contentsline {paragraph}{Data file.}{15}{section*.8}%
+\select@language {english} \contentsline {section}{\numberline {2.5}Operations Page}{16}{section.2.5}%
+\select@language {english} \contentsline {paragraph}{Data file.}{17}{section*.10}%
+\select@language {english} \contentsline {section}{\numberline {2.6}CodeBases Page}{18}{section.2.6}%
+\select@language {english} \contentsline {paragraph}{How the topics are decided.}{20}{section*.13}%
+\select@language {english} \contentsline {paragraph}{Metadata block.}{21}{section*.14}%
+\select@language {english} \contentsline {paragraph}{Data file.}{21}{section*.15}%
+\select@language {english} \contentsline {section}{\numberline {2.7}Publications Page}{21}{section.2.7}%
+\select@language {english} \contentsline {paragraph}{Data file.}{22}{section*.17}%
+\select@language {english} \contentsline {section}{\numberline {2.8}Team Page}{23}{section.2.8}%
+\select@language {english} \contentsline {paragraph}{Data file.}{24}{section*.19}%
+\select@language {english} \contentsline {section}{\numberline {2.9}Mini Apps Page}{25}{section.2.9}%
+\select@language {english} \contentsline {paragraph}{Data file.}{26}{section*.21}%
+\select@language {english} \contentsline {section}{\numberline {2.10}Gallery Page}{26}{section.2.10}%
+\select@language {english} \contentsline {paragraph}{Data file.}{27}{section*.23}%
+\select@language {english} \contentsline {section}{\numberline {2.11}Contact Page}{27}{section.2.11}%
+\select@language {english} \contentsline {paragraph}{Data file.}{28}{section*.25}%
+\select@language {english} \contentsline {section}{\numberline {2.12}GitHub Organisation Page}{28}{section.2.12}%
+\select@language {english} \contentsline {chapter}{\numberline {3}Developer Documentation}{31}{chapter.3}%
+\select@language {english} \contentsline {section}{\numberline {3.1}Technology Stack}{31}{section.3.1}%
+\select@language {english} \contentsline {subsection}{\numberline {3.1.1}Frontend Stack}{31}{subsection.3.1.1}%
+\select@language {english} \contentsline {paragraph}{React with TypeScript.}{31}{section*.27}%
+\select@language {english} \contentsline {paragraph}{Vite.}{32}{section*.28}%
+\select@language {english} \contentsline {paragraph}{React Router with Hash Routing.}{32}{section*.29}%
+\select@language {english} \contentsline {paragraph}{Material UI.}{32}{section*.30}%
+\select@language {english} \contentsline {paragraph}{Markdown rendering.}{32}{section*.31}%
+\select@language {english} \contentsline {subsection}{\numberline {3.1.2}Hosting and Automation}{33}{subsection.3.1.2}%
+\select@language {english} \contentsline {paragraph}{GitHub Pages.}{33}{section*.32}%
+\select@language {english} \contentsline {paragraph}{GitHub Actions.}{33}{section*.33}%
+\select@language {english} \contentsline {section}{\numberline {3.2}Design Decisions}{33}{section.3.2}%
+\select@language {english} \contentsline {subsection}{\numberline {3.2.1}Static Data Files Over a Backend}{33}{subsection.3.2.1}%
+\select@language {english} \contentsline {subsection}{\numberline {3.2.2}Why Hash Routing}{34}{subsection.3.2.2}%
+\select@language {english} \contentsline {subsection}{\numberline {3.2.3}Structured Markdown for CodeBases}{34}{subsection.3.2.3}%
+\select@language {english} \contentsline {subsection}{\numberline {3.2.4}Pluggable Components on the Operations Page}{35}{subsection.3.2.4}%
+\select@language {english} \contentsline {subsection}{\numberline {3.2.5}Interaction Pattern: Click-to-Expand}{36}{subsection.3.2.5}%
+\select@language {english} \contentsline {subsection}{\numberline {3.2.6}Why a Decoded-Text Header}{37}{subsection.3.2.6}%
+\select@language {english} \contentsline {subsection}{\numberline {3.2.7}Why Layout Diversity in the Gallery}{37}{subsection.3.2.7}%
+\select@language {english} \contentsline {subsection}{\numberline {3.2.8}Why No Image Generation for Visuals}{37}{subsection.3.2.8}%
+\select@language {english} \contentsline {section}{\numberline {3.3}Architecture and Data Flow}{38}{section.3.3}%
+\select@language {english} \contentsline {section}{\numberline {3.4}The CodeBases Parser}{39}{section.3.4}%
+\select@language {english} \contentsline {subsection}{\numberline {3.4.1}Loading the Documents}{39}{subsection.3.4.1}%
+\select@language {english} \contentsline {subsection}{\numberline {3.4.2}The Document Parser}{40}{subsection.3.4.2}%
+\select@language {english} \contentsline {subsection}{\numberline {3.4.3}The Metadata Block}{43}{subsection.3.4.3}%
+\select@language {english} \contentsline {subsection}{\numberline {3.4.4}From Parsed Document to Card Metadata}{45}{subsection.3.4.4}%
+\select@language {english} \contentsline {section}{\numberline {3.5}Publications Filtering}{47}{section.3.5}%
+\select@language {english} \contentsline {section}{\numberline {3.6}Gallery Page Building}{48}{section.3.6}%
+\select@language {english} \contentsline {section}{\numberline {3.7}The Component Registry on Operations}{50}{section.3.7}%
+\select@language {english} \contentsline {section}{\numberline {3.8}Theming}{50}{section.3.8}%
+\select@language {english} \contentsline {section}{\numberline {3.9}Repository Layout}{51}{section.3.9}%
+\select@language {english} \contentsline {section}{\numberline {3.10}Adding Content}{52}{section.3.10}%
+\select@language {english} \contentsline {paragraph}{Adding a team member.}{52}{section*.34}%
+\select@language {english} \contentsline {paragraph}{Adding a publication.}{52}{section*.35}%
+\select@language {english} \contentsline {paragraph}{Adding a project or sub-project.}{52}{section*.36}%
+\select@language {english} \contentsline {paragraph}{Adding a research area.}{52}{section*.37}%
+\select@language {english} \contentsline {paragraph}{Adding a codebase.}{52}{section*.38}%
+\select@language {english} \contentsline {paragraph}{Adding a mini app.}{52}{section*.39}%
+\select@language {english} \contentsline {paragraph}{Adding a gallery photo.}{53}{section*.40}%
+\select@language {english} \contentsline {paragraph}{Changing the contact details.}{53}{section*.41}%
+\select@language {english} \contentsline {paragraph}{Changing the lab address or external links.}{53}{section*.42}%
+\select@language {english} \contentsline {section}{\numberline {3.11}Testing}{53}{section.3.11}%
+\select@language {english} \contentsline {chapter}{\numberline {4}Challenges and Improvements}{55}{chapter.4}%
+\select@language {english} \contentsline {section}{\numberline {4.1}Challenges Faced}{55}{section.4.1}%
+\select@language {english} \contentsline {subsection}{\numberline {4.1.1}Designing the Right Level of Structure}{55}{subsection.4.1.1}%
+\select@language {english} \contentsline {subsection}{\numberline {4.1.2}Mobile Layout for the Team Page}{56}{subsection.4.1.2}%
+\select@language {english} \contentsline {subsection}{\numberline {4.1.3}Long Titles in the Honeycomb}{57}{subsection.4.1.3}%
+\select@language {english} \contentsline {subsection}{\numberline {4.1.4}Click Feedback on the Honeycomb and Role Grid}{57}{subsection.4.1.4}%
+\select@language {english} \contentsline {section}{\numberline {4.2}Current Gaps}{57}{section.4.2}%
+\select@language {english} \contentsline {subsection}{\numberline {4.2.1}Contact Form Backend}{58}{subsection.4.2.1}%
+\select@language {english} \contentsline {subsection}{\numberline {4.2.2}GitHub Actions Automation}{58}{subsection.4.2.2}%
+\select@language {english} \contentsline {subsection}{\numberline {4.2.3}Admin Dashboard}{59}{subsection.4.2.3}%
+\select@language {english} \contentsline {subsection}{\numberline {4.2.4}More Mini Apps}{59}{subsection.4.2.4}%
+\select@language {english} \contentsline {subsection}{\numberline {4.2.5}Site Configuration and Branding}{60}{subsection.4.2.5}%
+\select@language {english} \contentsline {section}{\numberline {4.3}Closing Notes}{60}{section.4.3}%
+\select@language {english} \contentsline {chapter}{Bibliography}{61}{section*.43}%
+\select@language {english} \contentsline {chapter}{List of Figures}{63}{section*.45}%
+\select@language {english} \contentsline {chapter}{List of Codes}{65}{section*.46}%

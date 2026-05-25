@@ -1,0 +1,568 @@
+%----------------------------------------------------------------------------
+\chapter{Developer Documentation}\label{ch:dev}
+%----------------------------------------------------------------------------
+
+This chapter documents the portal from a developer's point of view. It opens with the technology stack, then describes the design decisions taken on each part of the portal and the alternative approaches that were considered and rejected. From there it moves into the architecture and the data flow, the parser that powers the CodeBases page, the pluggable component registry that powers the Operations principles, the theming and routing setup, and the project's repository layout. The chapter closes with a section on testing, since the testing performed during this project was manual and is short enough to belong here rather than in its own chapter.
+
+%-----------------------------------------------------------
+\section{Technology Stack}\label{sec:dev-stack}
+
+The technology choices for the portal were practical rather than aspirational. The aim was a static, hostable-anywhere frontend with no backend dependency, so that the portal could be served from GitHub Pages without any infrastructure to maintain.
+
+\subsection{Frontend Stack}\label{subsec:dev-stack-frontend}
+
+\paragraph{React with TypeScript.}
+React is the rendering library for the entire portal \cite{react}. TypeScript sits on top of React and types every component, every data file, and every utility \cite{typescript}. The data-driven architecture relies heavily on TypeScript: every page reads from one or more typed data files, and a typo in a field name or a wrong shape in a data file is caught at compile time rather than at runtime. The interfaces and types for each data file (\texttt{ResearchArea}, \texttt{ProjectRole}, \texttt{TeamCategory}, etc.) sit in the same data directory as the data, which keeps the type and the data near each other and makes it obvious to a future editor what shape an entry should have.
+
+\paragraph{Vite.}
+Vite is the build tool and development server \cite{vite}. It was picked for its fast cold start, fast hot reload, and small production bundle. The portal does not have a backend, so the entire production output is a static bundle that can be served by any static-file host. Vite produces that bundle through \texttt{npm run build}. Vite is also used to import the Markdown content files at build time through its \texttt{import.meta.glob} feature, which bundles every \texttt{.md} file in \texttt{src/content/} into the static output as a raw string.
+
+\paragraph{React Router with Hash Routing.}
+React Router handles client-side navigation between pages \cite{reactrouter}. The portal uses \texttt{HashRouter} rather than \texttt{BrowserRouter}, and the reason is GitHub Pages. GitHub Pages serves static files only; it does not run a server-side rewrite rule that would redirect every unknown URL back to \texttt{index.html}. With \texttt{BrowserRouter} this means deep links break: opening \texttt{example.com/projects} directly in the browser results in a 404, because there is no file at that path. With \texttt{HashRouter} the path lives after the \texttt{\#} (e.g.\ \texttt{example.com/\#/projects}), the actual file requested is always \texttt{index.html}, and the router handles the rest on the client. This makes shareable links to any page on the portal work reliably without any infrastructure tricks.
+
+\paragraph{Material UI.}
+Material UI supplies the base components: buttons, cards, dialogs, dropdowns, autocompletes, collapsibles, and the grid layout \cite{mui}. It uses Emotion for CSS-in-JS styling \cite{emotion}. The portal's brand colours, typography, and dark-and-light themes are configured through Material UI's theme provider, which means a theme change propagates to every Material UI component on the portal automatically.
+
+\paragraph{Markdown rendering.}
+The CodeBases page reads Markdown content from each repository's documentation file and renders it on the page. The Markdown is parsed with a Markdown parser and rendered through a React Markdown component, with custom renderers for headings, code blocks, tables, and images so that the rendered output picks up the portal's brand colours and dark-mode styling \cite{markdownit, reactmarkdown, commonmark}.
+
+\subsection{Hosting and Automation}\label{subsec:dev-stack-hosting}
+
+\paragraph{GitHub Pages.}
+The portal is hosted on GitHub Pages \cite{githubpages}. The deployment pipeline is simple: Vite builds the static bundle into the \texttt{dist/} folder, and the contents of \texttt{dist/} are pushed to the \texttt{gh-pages} branch of the repository, which GitHub Pages serves. Because the portal has no backend, there is nothing else to deploy.
+
+\paragraph{GitHub Actions.}
+GitHub Actions is used (and where applicable, prepared) for automation \cite{githubactions}. There is one workflow for building and deploying the portal on push to the main branch, and there is a prepared (but not currently enabled) workflow that would fetch the latest documentation files from each tracked repository and commit the updated content back to the portal. The second workflow is disabled because it requires a GitHub access token to read the other lab repositories, and that token has not yet been provisioned for the project. The chapter on challenges and improvements describes this in more detail.
+
+%-----------------------------------------------------------
+\section{Design Decisions}\label{sec:dev-design}
+
+This section explains the design decisions taken during the project. For each major decision, it describes the alternatives that were considered, what was eventually chosen, and why.
+
+\subsection{Static Data Files Over a Backend}\label{subsec:dev-design-static}
+
+The portal is a fully static client-side application. There is no API, no database, and no backend service. Every page reads its content from one or more TypeScript data files inside the \texttt{src/data/} directory at build time, and the resulting static bundle is what gets served to visitors.
+
+The alternative would have been a small CMS or a custom backend with an admin panel. That was considered seriously, especially for the Publications page (which could grow into hundreds of entries) and the Team page (which changes whenever someone joins or leaves the lab). It was rejected for three reasons. The first is hosting: GitHub Pages does not run a backend, and the lab does not currently have infrastructure to host one. Adding a backend would mean either paying for a service, asking the university to host something, or running it on a personal server, and none of those was a good long-term option. The second is editing: a CMS adds an interface but it also adds an account, a database, and a deployment that all need to keep working. For a lab portal that changes weekly at most, that is a lot of moving parts. The third is the path of least resistance for the people who will actually edit the portal: opening a \texttt{.ts} file in a code editor and changing a string is faster than logging into a CMS, finding the right entry, editing it, saving it, and waiting for the cache to update.
+
+The trade-off is that someone with no programming background cannot edit the portal without opening a code editor. That is acknowledged as a limitation and is discussed under improvements; a dedicated admin dashboard would be the right solution, but it requires the backend that was deliberately not built.
+
+\subsection{Why Hash Routing}\label{subsec:dev-design-routing}
+
+React Router supports two main routing modes: \texttt{BrowserRouter}, which uses the HTML5 history API and produces clean URLs like \texttt{/projects}, and \texttt{HashRouter}, which puts the path after a \texttt{\#} sign as in \texttt{/\#/projects}. The portal uses \texttt{HashRouter}, and the reason is purely a hosting constraint.
+
+GitHub Pages is a static-file host. When a visitor opens \texttt{example.com/projects} directly, GitHub Pages looks for a file at \texttt{/projects} and, finding nothing, returns a 404. To make \texttt{BrowserRouter} work in this environment, the host has to be told to fall back to \texttt{index.html} for any unknown path, and GitHub Pages does not support that fallback. With \texttt{HashRouter}, the part after the \texttt{\#} is never sent to the server, so the request is always for the root of the site, GitHub Pages always returns \texttt{index.html}, and the router takes the path from the hash on the client.
+
+Clean URLs would have been nicer to look at, but they would have required either moving to a different host (Vercel, Netlify, or a custom server) or accepting that direct links to pages would not work. Neither was worth it for a portal whose main user journey is to land on the home page and click through the navigation bar.
+
+\subsection{Structured Markdown for CodeBases}\label{subsec:dev-design-markdown}
+
+The CodeBases page was the first page where the data-driven design was forced to deal with content that was not under the portal's direct control: documentation files written by the people who own the repositories. Three approaches were considered.
+
+The first approach was to render each documentation file exactly as GitHub renders a README, in one long scroll, with no internal navigation. That was the first version that got built. It looked acceptable for one repository and broke down completely as soon as there were several, because each document has a different shape, a different length, and a different idea of what belongs where. There was no chapter-like feel and no way to navigate inside a project.
+
+The second approach was to ignore the README entirely and store all the documentation content inside the portal as separate files or data structures. That was rejected because it would duplicate work: the repository owner would have to maintain the documentation on GitHub for the repository's own visitors, and again on the portal for the portal's visitors. Any change would have to be made twice. Duplication is the kind of thing that breaks down the fastest.
+
+The third approach, the one that was taken, was to fix the document shape rather than the rendering. A simple convention was agreed: one first-level heading for the repository title, second-level headings for top-level topics, third-level headings for sub-topics. With that convention in place, a parser can take any document that follows it and split it into navigable topics. The repository owner maintains a single document, the portal reads that document at build time, and the page renders it as a course-like walkthrough. A template Markdown file is included with the project so that any new repository can copy it and follow the same shape from the start.
+
+A small metadata block at the top of each document (a \texttt{\#\# PORTAL\_METADATA} heading followed by a \texttt{portal} fenced code block) carries the fields the portal needs to render the card on the CodeBases page (title, summary, logos, repository URL, dates). Keeping the metadata in the same file as the content means everything about a repository lives in one place: open one file and you see both the card description and the topics that will appear on the detail page.
+
+\subsection{Pluggable Components on the Operations Page}\label{subsec:dev-design-pluggable}
+
+The principles section of the Operations page presents an interesting design problem. Each principle has a written description on one side and an interactive visual on the other. The visuals are not generic icons; they are custom SVG-and-React components, each illustrating something specific about the principle. The question was how to bind a principle (which lives in the data file) to its visual (which is a React component).
+
+The naive approach is to put the component reference directly into the data file. That was rejected because data files should not import React components; it would push the data into needing to know about the rendering layer, and it would mean that anyone editing the data has to import the right component and remember the right name.
+
+The approach taken was a small registry. Each principle in the data file declares a \texttt{componentKey} string and an \texttt{iconFallback} string. The page keeps a registry that maps component keys to actual React components. At render time, the page looks up the key. If a component is registered for that key, it is rendered. If not, the fallback (a Material UI icon name) is rendered instead.
+
+This decouples the data from the components in both directions. Adding a new principle whose visual already exists in the registry requires no code changes at all; only a new entry in the data file. Adding a new visual requires one new component file and one line in the registry, after which it is available to every principle in the data file. The fallback means the page never breaks: if the data file references a key that does not exist, the icon shows up instead and the rest of the page still renders.
+
+\subsection{Interaction Pattern: Click-to-Expand}\label{subsec:dev-design-interaction}
+
+Three of the lab's biggest pages (Projects, Research, Operations) share the same interaction pattern: a graphical element on the page (a node graph, a honeycomb, a quadrant grid), and clicking an item in the graphic opens a detail panel either next to it or below it on smaller screens. This was an intentional choice. The first interactive page built was the Research honeycomb, and once that was working the same pattern was applied to the other two for consistency. A visitor who has used the honeycomb on the Research page already knows how to use the role grid on the Operations page and the project graph on the Projects page; they do not have to learn a new interaction.
+
+The one place where the pattern is deliberately not followed is the Projects page, where the first project is auto-selected on page load. This is because the Projects page is the entry point for most visitors interested in research output, and showing nothing on page load would force them to click before they could read anything. The Research and Operations pages, by contrast, are introductory in nature; their job is to give an overview first and the details only on demand.
+
+\subsection{Why a Decoded-Text Header}\label{subsec:dev-design-header}
+
+The portal title in the header (\textbf{Cybersecurity-Lab}) is animated: on every page load, it appears as a scrambled string of characters and then resolves into the readable title over a second or so. This is a small touch and could easily have been left out. It was kept because it fits the lab's identity, the lab studies cryptography, authentication, and systems that hide and reveal information, and a small decoded-text animation in the header echoes that. The animation runs once per load and does not repeat, so it does not become annoying.
+
+\subsection{Why Layout Diversity in the Gallery}\label{subsec:dev-design-gallery}
+
+The Gallery page picks one of three different board layouts for each page of photos. The alternative would have been a single, fixed layout. The reason a varied pick was preferred is honesty about the photo set: the lab does not have a fixed number of curated photos, and the photo set is expected to grow over time. A fixed layout would have to be designed for a specific photo count, and adding photos would require redesigning the page. Three layouts that handle different photo counts means new photos can be added without changing the page; the portal picks a layout that fits and rotates between them so the same section does not appear twice in a row.
+
+\subsection{Why No Image Generation for Visuals}\label{subsec:dev-design-visuals}
+
+Several of the visual elements on the portal (the honeycomb, the role grid, the interactive principle components, the project node graph) could have been done with rendered images or external illustrations. Instead they are all built as SVG inside React components.
+
+The trade-off was deliberate. SVG components scale to any screen size without loss of quality, they pick up the theme colours through CSS variables, and they animate cleanly with browser primitives. An exported image would have looked good at one size, broken at others, and required a re-export every time a theme colour or a small detail changed. For interactive elements specifically, SVG-in-React is also much easier to wire up to click and hover handlers than an image would be.
+
+The cost is that the components are more work to build than dropping an image into the page would have been. That cost was paid once per component and is not paid again.
+
+%-----------------------------------------------------------
+\section{Architecture and Data Flow}\label{sec:dev-architecture}
+
+The portal's architecture is intentionally flat. There is no state management library, no global store, no event bus, no service layer. Each page is a self-contained React component that imports its data from one or more files in \texttt{src/data/}, applies its own internal state (which project is selected, which category is expanded), and renders.
+
+The flow for a typical page is straightforward: the page component imports its data file at the top, types the import using the interfaces exported from the data file itself, and then iterates over the data to render the page. Selection state (which hex is open, which role is selected) lives in the page component's local state and resets when the visitor navigates away. There is no caching layer because there are no asynchronous fetches; every piece of data is bundled into the static output and available synchronously.
+
+Asset paths across the portal are routed through a small utility, \texttt{resolveAssetPath}. Because the portal is served from a sub-path on GitHub Pages, every image and avatar URL needs the right base prefix to resolve correctly. The utility handles this in one place so that components do not have to: it returns external URLs unchanged, leaves \texttt{data:} URLs alone, and prefixes relative paths with Vite's \texttt{BASE\_URL}. Listing~\ref{lst:asset-path} shows it in full.
+
+\begin{lstlisting}[language=TypeScript,caption={\texttt{resolveAssetPath} utility used by every component that renders an image, avatar, or logo.},label={lst:asset-path}]
+	const DEFAULT_PREFIX = import.meta.env.BASE_URL;
+	
+	export function resolveAssetPath(path?: string | null): string {
+		if (!path) {
+			return DEFAULT_PREFIX;
+		}
+		
+		if (/^(https?:)?\/\//i.test(path) || path.startsWith("data:")) {
+			return path;
+		}
+		
+		const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+		
+		return `${DEFAULT_PREFIX}${normalizedPath}`;
+	}
+\end{lstlisting}
+
+%-----------------------------------------------------------
+\section{The CodeBases Parser}\label{sec:dev-parser}
+
+The CodeBases parser is the most involved piece of code in the project. It takes a raw Markdown string and produces a structured representation that the documentation view can render as a navigable course. It also pulls out a small metadata block embedded near the top of the document, which the CodeBases card on the index page uses.
+
+\subsection{Loading the Documents}\label{subsec:dev-parser-loading}
+
+The Markdown files live in \texttt{src/content/} and are loaded at build time by Vite. The portal does not fetch them at runtime; the loader reads every \texttt{.md} file in the directory and bundles it into the static output as a raw string. Listing~\ref{lst:repo-loader} shows the loader.
+
+\begin{lstlisting}[language=TypeScript,caption={\texttt{getRepositoryPages} loads every Markdown file from \texttt{src/content/} as a raw string at build time.},label={lst:repo-loader}]
+	import type { RepositoryPageMeta } from "../types";
+	
+	export function getRepositoryPages(): RepositoryPageMeta[] {
+		const modules = import.meta.glob("../content/*.md", {
+			eager: true,
+			query: "?raw",
+			import: "default",
+		}) as Record<string, string>;
+		
+		return Object.entries(modules).map(([filePath, content]) => {
+			const fileName = filePath.split("/").pop() ?? "";
+			const fileSlug = fileName.replace(/\.md$/i, "");
+			
+			return {
+				fileName,
+				fileSlug,
+				content,
+			};
+		});
+	}
+\end{lstlisting}
+
+The file slug (the file name without its extension) is the default identifier for a repository if the metadata block does not supply one of its own. Once the raw content is loaded, each document is handed to the parser.
+
+\subsection{The Document Parser}\label{subsec:dev-parser-document}
+
+The parser walks the Markdown line by line and identifies headings, the table of contents, the metadata block, and code fences. It treats the first \texttt{\#} heading as the document title, \texttt{\#\#} headings as sections, and \texttt{\#\#\#} headings as sub-sections (called children of a section). A \texttt{\#\# Table of Contents} heading and the lines underneath it are skipped, because the portal builds its own sidebar from the section list and the in-document table of contents would only duplicate that. A \texttt{\#\# PORTAL\_METADATA} heading marks the start of the metadata block, which is read separately and not added to the rendered content.
+
+A small \texttt{slugifyHeading} helper turns each heading title into a stable identifier the sidebar can use as a URL fragment and as a React key. Listing~\ref{lst:slugify} shows it.
+
+\begin{lstlisting}[language=TypeScript,caption={\texttt{slugifyHeading} converts a heading title into a stable identifier.},label={lst:slugify}]
+	function slugifyHeading(title: string): string {
+		return title
+		.toLowerCase()
+		.replace(/[`*_~]/g, "")
+		.replace(/[^\p{L}\p{N}\s-]/gu, "")
+		.trim()
+		.replace(/\s+/g, "-");
+	}
+\end{lstlisting}
+
+The core of the parser is a state machine over the lines of the document. It keeps the current section, the current child, two buffers for accumulating the body of each, and a few flags that track whether the walker is currently inside a code fence, the table of contents, the metadata block, or the metadata's fenced code.
+
+The first half of the walk, shown in Listing~\ref{lst:parser-core-1}, handles the special states: the metadata block, the \texttt{\#\# PORTAL\_METADATA} marker, and code fences. These checks come first because they all suppress normal content handling for the lines they cover.
+
+\begin{lstlisting}[language=TypeScript,caption={The first half of \texttt{parseRepositoryDocument}: special-state handling for metadata, the portal block, and code fences.},label={lst:parser-core-1}]
+	for (const rawLine of lines) {
+		const trimmedLine = rawLine.trim();
+		
+		if (insideMetadata) {
+			if (!insidePortalBlock) {
+				if (trimmedLine.startsWith("```portal")) {
+					insidePortalBlock = true;
+				}
+				continue;
+			}
+			
+			if (trimmedLine === "```") {
+				metadata = parsePortalMetadataBlock(portalBlockLines);
+				insidePortalBlock = false;
+				insideMetadata = false;
+				continue;
+			}
+			
+			portalBlockLines.push(rawLine);
+			continue;
+		}
+		
+		if (trimmedLine === "## PORTAL_METADATA") {
+			flushSection();
+			insideTableOfContents = false;
+			insideMetadata = true;
+			continue;
+		}
+		
+		if (isFenceLine(rawLine)) {
+			insideCodeFence = !insideCodeFence;
+			if (!insideTableOfContents) {
+				pushContentLine(rawLine);
+			}
+			continue;
+		}
+		
+		if (insideCodeFence) {
+			if (!insideTableOfContents) {
+				pushContentLine(rawLine);
+			}
+			continue;
+		}
+	\end{lstlisting}
+	
+	The second half, shown in Listing~\ref{lst:parser-core-2}, handles the headings themselves and the fall-through case for regular content lines. A \texttt{\#\#} heading whose title matches ``Table of Contents'' switches the walker into TOC mode (which suppresses content until the next \texttt{\#\#}); a \texttt{\#} heading is the document title and is skipped; a \texttt{\#\#} heading starts a new section; a \texttt{\#\#\#} heading starts a new child of the current section.
+	
+	\begin{lstlisting}[language=TypeScript,caption={The second half of \texttt{parseRepositoryDocument}: heading handling and fall-through to content lines.},label={lst:parser-core-2}]
+		const headingMatch = rawLine.match(/^(#{1,3})\s+(.*)$/);
+		
+		if (headingMatch) {
+			const level = headingMatch[1].length;
+			const title = headingMatch[2].trim();
+			
+			if (level === 2 && /table of contents/i.test(title)) {
+				flushSection();
+				insideTableOfContents = true;
+				continue;
+			}
+			
+			if (insideTableOfContents) {
+				if (level === 2) {
+					insideTableOfContents = false;
+				} else {
+					continue;
+				}
+			}
+			
+			if (level === 1) {
+				continue;
+			}
+			
+			if (level === 2) {
+				startNewSection(title);
+				continue;
+			}
+			
+			if (level === 3) {
+				startNewChild(title);
+				continue;
+			}
+		}
+		
+		if (insideTableOfContents) {
+			continue;
+		}
+		
+		pushContentLine(rawLine);
+	}
+	
+	flushSection();
+\end{lstlisting}
+
+A few details are worth flagging. The code fence detection is what stops the parser from treating a \texttt{\#\#} heading inside a code block as a real section heading. The \texttt{flushSection} helper finalises the current section (closing its child if any), commits it to the section list, and resets the buffers. The fallback for unparseable lines (in the surrounding \texttt{try/catch}, not shown here) writes a short warning into the section body so the document still renders even if a single line trips up the walker.
+
+\subsection{The Metadata Block}\label{subsec:dev-parser-metadata}
+
+The metadata block uses a deliberately simple format: \texttt{key: value} lines inside a \texttt{portal} fenced code block, with a special \texttt{logos:} key that introduces a list of dash-prefixed entries. Listing~\ref{lst:metadata-parser} shows the helper that reads it.
+
+\begin{lstlisting}[language=TypeScript,caption={\texttt{parsePortalMetadataBlock} reads the small key/value block at the top of each document.},label={lst:metadata-parser}]
+	function parsePortalMetadataBlock(lines: string[]): ParsedPortalMetadata {
+		const metadata: ParsedPortalMetadata = {};
+		const logos: string[] = [];
+		
+		let insideLogos = false;
+		
+		for (const rawLine of lines) {
+			const line = rawLine.trim();
+			
+			if (!line) continue;
+			
+			if (line.startsWith("logos:")) {
+				insideLogos = true;
+				continue;
+			}
+			
+			if (insideLogos && line.startsWith("-")) {
+				logos.push(line.replace(/^-+\s*/, "").trim());
+				continue;
+			}
+			
+			if (insideLogos && !line.startsWith("-")) {
+				insideLogos = false;
+			}
+			
+			const separatorIndex = line.indexOf(":");
+			if (separatorIndex === -1) continue;
+			
+			const key = line.slice(0, separatorIndex).trim();
+			const value = line.slice(separatorIndex + 1).trim();
+			
+			switch (key) {
+				case "slug":          metadata.slug = value || undefined; break;
+				case "title":         metadata.title = value || undefined; break;
+				case "summary":       metadata.summary = value || undefined; break;
+				case "startDate":     metadata.startDate = value || undefined; break;
+				case "endDate":       metadata.endDate = value || undefined; break;
+				case "repositoryUrl": metadata.repositoryUrl = value || undefined; break;
+				default: break;
+			}
+		}
+		
+		metadata.logos = logos;
+		return metadata;
+	}
+\end{lstlisting}
+
+The block intentionally avoids needing a real YAML parser. Repository owners only have to follow the pattern \texttt{key: value} and (for logos) a dash-prefixed list. Anything else in the block is silently ignored, which means stray text in a draft does not break parsing.
+
+\subsection{From Parsed Document to Card Metadata}\label{subsec:dev-parser-card}
+
+Once each document has been parsed, \texttt{getParsedCodebase} converts the parsed metadata into the shape the CodeBases card expects. It resolves a slug (preferring the metadata's slug and falling back to the file slug), supplies a default title and description if the metadata is missing them, and builds the route path the card's \textbf{Open Project} button uses. Listing~\ref{lst:parser-card} shows the relevant part.
+
+\begin{lstlisting}[language=TypeScript,caption={\texttt{buildCodebaseMeta} turns the parsed metadata into the shape the CodeBases card uses.},label={lst:parser-card}]
+	function buildCodebaseMeta(
+	repo: RepositoryPageMeta,
+	metadata: ParsedPortalMetadata,
+	): CodebaseMeta {
+		const resolvedSlug = resolveProjectSlug(repo, metadata);
+		
+		return {
+			slug: resolvedSlug,
+			title: metadata.title || toTitleCaseFromSlug(resolvedSlug),
+			shortDescription:
+			metadata.summary ||
+			"This project contains repository-based documentation and related materials.",
+			routePath: `/repos/${resolvedSlug}`,
+			startDate: metadata.startDate,
+			endDate: metadata.endDate,
+			logos: metadata.logos || [],
+			repositoryUrl: metadata.repositoryUrl,
+		};
+	}
+\end{lstlisting}
+
+A second helper, \texttt{sortCodebase}, orders the cards by title or by start date. The sort modes match the dropdown labels on the CodeBases page (newest first, oldest first, title ascending, title descending) and the date sort falls back to title comparison when two cards share a start date, which keeps the order stable. Listing~\ref{lst:sort-codebase} shows it.
+
+\begin{lstlisting}[language=TypeScript,caption={\texttt{sortCodebase} sorts the CodeBases cards by the user-selected mode.},label={lst:sort-codebase}]
+	export function sortCodebase(
+	codes: CodebaseMeta[],
+	mode: CodebaseSortMode = "title-asc",
+	): CodebaseMeta[] {
+		const sorted = [...codes];
+		
+		switch (mode) {
+			case "title-desc":
+			return sorted.sort((a, b) => b.title.localeCompare(a.title));
+			
+			case "startDate-newest":
+			return sorted.sort((a, b) => {
+				const aTime = toSortableTime(a.startDate);
+				const bTime = toSortableTime(b.startDate);
+				if (aTime !== bTime) return bTime - aTime;
+				return a.title.localeCompare(b.title);
+			});
+			
+			case "startDate-oldest":
+			return sorted.sort((a, b) => {
+				const aTime = toSortableTime(a.startDate);
+				const bTime = toSortableTime(b.startDate);
+				if (aTime !== bTime) return aTime - bTime;
+				return a.title.localeCompare(b.title);
+			});
+			
+			case "title-asc":
+			default:
+			return sorted.sort((a, b) => a.title.localeCompare(b.title));
+		}
+	}
+\end{lstlisting}
+
+%-----------------------------------------------------------
+\section{Publications Filtering}\label{sec:dev-publications}
+
+The Publications page composes three small helpers to do all of its filtering and sorting: \texttt{sortPublications} (year-descending, then alphabetical), \texttt{filterPublications} (type filter), and \texttt{searchPublications} (combined type, title-search, and year filter). Listing~\ref{lst:publications-filter} shows the combined search function, which is what the page calls on every interaction.
+
+\begin{lstlisting}[language=TypeScript,caption={\texttt{searchPublications} combines the type, title, and year filters into one pass over the publication list.},label={lst:publications-filter}]
+	export function searchPublications(
+	items: PublicationItem[],
+	options: PublicationSearchOptions
+	): PublicationItem[] {
+		const normalizedSearch = options.searchText.trim().toLowerCase();
+		const normalizedYear = options.year.trim();
+		
+		return items.filter((item) => {
+			const matchesType =
+			options.type === "all" ? true : item.type === options.type;
+			
+			const matchesSearch =
+			normalizedSearch.length === 0
+			? true
+			: item.title.toLowerCase().includes(normalizedSearch);
+			
+			const matchesYear =
+			normalizedYear.length === 0 ? true : String(item.year) === normalizedYear;
+			
+			return matchesType && matchesSearch && matchesYear;
+		});
+	}
+\end{lstlisting}
+
+The hashtag filter (described in the user documentation) is layered on top of this same pipeline: the active tag pills are stored separately and a final filter pass keeps only publications whose tag list contains every active tag.
+
+%-----------------------------------------------------------
+\section{Gallery Page Building}\label{sec:dev-gallery}
+
+The Gallery page does more than read a list of photos and render them; it builds a sequence of board pages from the available photos, picking a layout for each page based on how many photos remain and rotating between layouts so consecutive pages do not use the same one. The logic lives in \texttt{buildGalleryPages}, shown in Listing~\ref{lst:gallery-build}.
+
+\begin{lstlisting}[language=TypeScript,caption={\texttt{buildGalleryPages} produces the sequence of board pages for the Gallery, picking sections by available slot count and rotating between them.},label={lst:gallery-build}]
+	const DESKTOP_SECTIONS: { id: SectionId; slots: number }[] = [
+	{ id: "A", slots: 4 },
+	{ id: "B", slots: 3 },
+	{ id: "C", slots: 3 },
+	];
+	
+	function pickRandomSection(exclude: SectionId | null): { id: SectionId; slots: number } {
+		const pool = exclude
+		? DESKTOP_SECTIONS.filter((s) => s.id !== exclude)
+		: DESKTOP_SECTIONS;
+		const index = Math.floor(Math.random() * pool.length);
+		return pool[index];
+	}
+	
+	function padPhotos(photos: string[], targetCount: number): string[] {
+		const result = [...photos];
+		while (result.length < targetCount) {
+			result.push(defaultPhoto);
+		}
+		return result;
+	}
+	
+	export function buildGalleryPages(
+	photos: string[],
+	isMobile: boolean,
+	): GalleryPage[] {
+		if (photos.length === 0) return [];
+		
+		if (isMobile) {
+			return photos.map((photo) => ({
+				sectionId: "MOBILE",
+				photos: [photo],
+			}));
+		}
+		
+		const pages: GalleryPage[] = [];
+		let cursor = 0;
+		let lastSectionId: SectionId | null = null;
+		
+		while (cursor < photos.length) {
+			const section = pickRandomSection(lastSectionId);
+			const slice = photos.slice(cursor, cursor + section.slots);
+			pages.push({
+				sectionId: section.id,
+				photos: padPhotos(slice, section.slots),
+			});
+			cursor += section.slots;
+			lastSectionId = section.id;
+		}
+		
+		return pages;
+	}
+\end{lstlisting}
+
+Two details are worth flagging. The first is the exclusion of the previous section when picking the next one (\texttt{pickRandomSection} excludes \texttt{lastSectionId}), which is what guarantees that the same layout never appears twice in a row. The second is \texttt{padPhotos}, which fills any unused slots with the default photo so that the board still looks complete when the photo list runs out before the page does. On mobile the function takes a simpler path: one photo per page, with a fixed \texttt{MOBILE} section id, since the desktop boards do not fit in a narrow viewport.
+
+%-----------------------------------------------------------
+\section{The Component Registry on Operations}\label{sec:dev-registry}
+
+The pluggable component registry described in Section~\ref{subsec:dev-design-pluggable} is implemented as a small lookup map. The data file declares a \texttt{componentKey} string per principle; the registry resolves the string to a React component at render time.
+
+The page component then looks up the key for each principle and renders either the registered component or the fallback Material UI icon described by the \texttt{iconFallback} field. The fallback path is what makes the registry safe: a data file can reference a key that does not exist, and the page still renders cleanly.
+
+%-----------------------------------------------------------
+\section{Theming}\label{sec:dev-theming}
+
+The portal supports two themes: dark and light. The dark theme is the default. The toggle in the header switches between them in place without a page reload.
+
+The theming is implemented through a single token file (\texttt{src/data/themeTokens.ts}) that exports a \texttt{themeTokens} object with two entries: \texttt{dark} and \texttt{light}. Each entry contains a complete set of colour tokens (primary main, primary light, primary dark, secondary, background, paper, text primary, text secondary, divider, surface, brand navy, white, contrast colours, and a set of decorative tokens used for the PCB-style decorative motifs). The Material UI theme provider is configured to read from the active token set, and a small React context tracks which theme is active.
+
+Adding a new colour token is a matter of adding the field to both \texttt{dark} and \texttt{light} (TypeScript will fail the build if one is added without the other, because the token shape is typed), then using the token in the component that needs it. Adjusting an existing colour is a one-line change.
+
+Decorative motifs (the PCB-themed backgrounds on the home page and the gallery) use their own dedicated tokens (\texttt{pcbSubstrate}, \texttt{pcbTraceGold}, etc.) so that the decorative styling can be tuned without affecting the rest of the portal's colours.
+
+%-----------------------------------------------------------
+\section{Repository Layout}\label{sec:dev-layout}
+
+The portal's source code is organised into a small number of top-level directories under \texttt{src/}:
+
+\begin{itemize}
+	\item \texttt{src/components/} contains the React components that render each page. Components are grouped by page: \texttt{components/team/}, \texttt{components/projects/}, \texttt{components/research/}, and so on. Shared layout components (header, footer, navigation) sit at the top level.
+	\item \texttt{src/data/} contains the data files described throughout this document and the user documentation chapter. Each file exports both the data and the TypeScript interface it satisfies.
+	\item \texttt{src/content/} contains the Markdown files that drive the CodeBases page. One file per repository.
+	\item \texttt{src/types/} contains the cross-cutting TypeScript interfaces that are used in multiple places (\texttt{TeamMember}, \texttt{TeamCategory}, \texttt{PublicationItem}, \texttt{ContactPageData}, \texttt{ProjectsPageData}, \texttt{ParsedRepositoryDocument}, etc.).
+	\item \texttt{src/utils/} contains small utility functions: \texttt{resolveAssetPath} (the asset path resolver), \texttt{getRepositoryPages} (the Markdown loader), \texttt{parseRepositoryDocument} (the document parser), \texttt{getCodebases} (the card-metadata builder), \texttt{sortCodebase} (the codebase sort), \texttt{publications} (the publication filter and search helpers), and \texttt{buildGalleryPages} (the gallery page builder).
+	\item \texttt{src/theme/} contains the Material UI theme configuration and the React context for the theme toggle.
+	\item \texttt{public/} contains static assets that are served as-is: the lab logo, the avatars, the gallery photos, the tool images, the publication venue images, and the project images.
+\end{itemize}
+
+The build is configured through \texttt{vite.config.ts} at the repository root and the TypeScript compiler is configured through \texttt{tsconfig.json}. The two most important Vite settings are the \texttt{base} URL (which must match the GitHub Pages path so that assets resolve correctly) and the build output directory.
+
+%-----------------------------------------------------------
+\section{Adding Content}\label{sec:dev-adding}
+
+Most additions to the portal are data-only and require no code changes. The summary below lists what to do for each common case.
+
+\paragraph{Adding a team member.} Edit \texttt{src/data/teamData.ts}. Find the right category and add a new entry to its \texttt{members} array. If the member needs a photo, drop the photo file into \texttt{public/avatars/} and set the \texttt{picture} field to its file name.
+
+\paragraph{Adding a publication.} Edit \texttt{src/data/publicationsData.ts}. Add a new publication entry with its code, title, authors, venue, year, type, abstract, tags, URL, and venue image. Drop the venue logo into \texttt{public/publications/} and set the \texttt{venueImage} field to its file name.
+
+\paragraph{Adding a project or sub-project.} Edit \texttt{src/data/projectsPageData.ts}. Add a new entry to the \texttt{projects} array. The project graph layout adapts to the number of projects automatically. If the new project relates to existing codebases, list the codebase slugs in the \texttt{codebases} field of the relevant sub-project.
+
+\paragraph{Adding a research area.} Edit \texttt{src/data/ResearchPageData.ts}. Add a new entry to the \texttt{researchAreas} array. The honeycomb adapts to the number of areas.
+
+\paragraph{Adding a codebase.} Drop a new Markdown file into \texttt{src/content/}. The file must start with a \texttt{\#} heading for the title and a \texttt{\#\# PORTAL\_METADATA} block with at least a \texttt{title} and \texttt{summary}, then use \texttt{\#\#} headings for sections and optional \texttt{\#\#\#} headings for sub-sections. A template Markdown file is included in the project root.
+
+\paragraph{Adding a mini app.} Edit \texttt{src/data/toolsData.ts}. Add the new tool's entry with its title, slug, image, description, status, and category. Add a route in the application that renders the tool's page at the new slug.
+
+\paragraph{Adding a gallery photo.} Drop the photo into \texttt{public/gallery/} and add the file name to \texttt{galleryPhotos} in \texttt{src/data/galleryData.ts}.
+
+\paragraph{Changing the contact details.} Edit \texttt{src/data/contactPageData.ts} and set the \texttt{email} and \texttt{phone} fields.
+
+\paragraph{Changing the lab address or external links.} Edit \texttt{src/data/siteConfig.ts}.
+
+%-----------------------------------------------------------
+\section{Testing}\label{sec:dev-testing}
+
+The testing performed during this project was manual. There are no automated tests in the portal. The reason for this is straightforward: the portal is a static, client-side application with no business logic, no API surface, no authentication, no database, and no asynchronous state to test in a meaningful unit-test sense. Most of what could go wrong is a layout issue or a data-shape issue, both of which are easier to catch by opening the page in the browser than by writing a test for them.
+
+Testing was done by going through each page after every meaningful change, in both light and dark mode, on both desktop and mobile viewport widths. The checks were:
+
+\begin{itemize}
+	\item Does the page render without console errors?
+	\item Are all interactive elements clickable and do they produce the expected behaviour (selection, expansion, navigation)?
+	\item Does the page stack correctly on mobile, with no horizontal scroll?
+	\item Do hover and focus states behave as expected, including keyboard focus rings on tab-based navigation?
+	\item Does the theme toggle change every component without leaving stray light-mode colours in dark mode or vice versa?
+	\item Do external links open in a new tab and internal links keep the same tab?
+\end{itemize}
+
+A small set of edge cases was checked deliberately because they came up during development. The Team page's mobile layout was tested specifically with long alumni names because earlier versions caused horizontal scroll. The honeycomb was tested with research area titles of various lengths because the multi-line wrapping had to handle the longer names. The Publications filter was tested with several active tags at once because the AND semantics had to behave correctly. The CodeBases parser was tested against documents that did not follow the convention to confirm that they still render acceptably (a single-topic view or a fallback warning inside a section body) rather than breaking the page.
+
+The TypeScript compiler is itself part of the testing strategy. Every data file is typed against the interface it satisfies, and the build fails if any entry has a wrong shape. This catches most data-related mistakes at build time before they can break a page.
+
+For future work, automated component tests and visual-regression tests would be a reasonable addition, particularly for the CodeBases parser and the pluggable component registry, both of which have non-trivial logic. They were not built for this project because the manual testing was sufficient for the project's scope and because the time was better spent on building the actual features.
